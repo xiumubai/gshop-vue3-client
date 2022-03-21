@@ -1,0 +1,13 @@
+<template>
+	<div>Search</div>
+</template>
+
+<script>
+export default {
+	name: "Search",
+};
+</script>
+
+<script lang="ts" setup></script>
+
+<style></style>
