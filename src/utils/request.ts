@@ -33,12 +33,39 @@ const request = axios.create({
 	headers: {},
 });
 
+/*
+  每次发送请求的时候，创建一个promise对象
+    const promise = Promise.resolve(config) // config请求配置对象
+      .then(请求拦截器成功的回调, 请求拦截器失败的回调)
+      .then(发送请求的函数, undefined)
+      .then(响应拦截器成功的回调, 响应拦截器失败的回调)
+
+      then方法返回值：一定是一个promise对象，他的状态：
+        1. 如果内部报错就是失败状态，结果值就是错误原因
+        2. 如果内部返回一个失败的promise对象，也是失败状态，结果值就是失败状态的promise的结果值
+        3. 否则就是成功状态，结果值看函数的返回值 或 成功promise对象的结果值
+
+      1. Promise.resolve(config) 返回值成功promise对象，promise对象内部的结果值是config
+        所以：返回一个成功状态promise对象，结果值为config
+      2. .then(请求拦截器成功的回调, 请求拦截器失败的回调)
+        触发请求拦截器成功的回调，并接受到config参数
+        所以：返回一个成功的promise，结果值为config
+      3. .then(发送请求的函数, undefined)
+        触发发送请求的函数，此时会发送请求，携带config
+      4. .then(响应拦截器成功的回调, 响应拦截器失败的回调)
+        请求成功 -> 响应拦截器成功的回调
+        请求成功 -> 响应拦截器失败的回调
+      5. 组件代码：await request({ method: xxx })
+
+    promise就是最终 request({ method: xxx }) 函数调用的返回值
+*/
+
 // 拦截器：请求的生命周期函数
 
 // 请求拦截器函数：发送请求之前触发的函数
 request.interceptors.request.use(
 	// 成功时触发
-	(config) => {
+	(config: any) => {
 		/*
       config是请求的配置对象
         将来发送请求：
@@ -54,6 +81,10 @@ request.interceptors.request.use(
           params: { xxx }
         }
     */
+
+		// 每次发送请求之前都会触发当前函数。再次在headers中携带了token参数
+		// 所以真正请求时就有token参数了
+		// config.headers.token = "xxxx";
 
 		// 必须返回config，因为下一步就要发送请求，发送请求需要config
 		return config;
@@ -99,12 +130,23 @@ request.interceptors.response.use(
 
         一般只需要使用data。响应体数据
     */
+
+		// 请求成功，并不代表功能成功
+		// 判断功能是否成功
+		if (response.data.code === 200) {
+			// 功能成功：1. 将promise对象的状态改为成功状态 2. 返回成功的数据即可 response.data.data
+			return response.data.data;
+		} else {
+			// 功能失败：1. 将promise对象的状态改为失败状态 3. 返回失败的原因 response.data.message
+			return Promise.reject(response.data.message);
+		}
 	},
 	// 失败时触发：请求失败
 	(error) => {
 		/*
       请求失败。error就是请求失败的原因
     */
+		return Promise.reject(error);
 	}
 );
 

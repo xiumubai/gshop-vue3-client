@@ -424,17 +424,28 @@ import { onMounted } from "vue";
 import { reqGetCategoryList } from "../../api/home";
 
 // mounted生命周期函数
-onMounted(async () => {
-	const res = await reqGetCategoryList();
-	console.log(res);
+// onMounted(async () => {
+// 	const res = await reqGetCategoryList();
+// 	console.log(res);
 
-	// 请求成功，并不能代表功能成功，也有可能功能失败
-	// 返回值promise对象变成成功状态，只代表请求成功
-	// 还需要判断code的值才能知道，功能是否成功
-	if (res.data.code === 200) {
-		console.log("功能成功", res.data.data);
-	} else {
-		console.log("功能失败", res.data.message);
+// 	// 请求成功，并不能代表功能成功，也有可能功能失败
+// 	// 返回值promise对象变成成功状态，只代表请求成功
+// 	// 还需要判断code的值才能知道，功能是否成功
+// 	if (res.data.code === 200) {
+// 		console.log("功能成功", res.data.data);
+// 	} else {
+// 		console.log("功能失败", res.data.message);
+// 	}
+// });
+
+onMounted(async () => {
+	try {
+		const data = await reqGetCategoryList();
+		// 功能成功
+		console.log(data);
+	} catch (error) {
+		// 请求失败、功能失败
+		console.log(error);
 	}
 });
 </script>
