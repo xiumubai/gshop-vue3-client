@@ -426,6 +426,8 @@ import { reqGetCategoryList } from "../../api/home";
 // mounted生命周期函数
 onMounted(async () => {
 	const res = await reqGetCategoryList();
+	console.log(res);
+
 	// 请求成功，并不能代表功能成功，也有可能功能失败
 	// 返回值promise对象变成成功状态，只代表请求成功
 	// 还需要判断code的值才能知道，功能是否成功

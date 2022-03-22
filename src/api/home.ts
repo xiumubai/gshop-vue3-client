@@ -7,3 +7,4 @@ export const reqGetCategoryList = () => {
 		url: "/api/product/getBaseCategoryList",
 	});
 };
+
