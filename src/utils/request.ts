@@ -17,9 +17,16 @@
     4. 发送请求的时候可以携带公共参数：token
 
     5. 设置请求的进度条
+      npm i nprogress
+      npm i @types/nprogress -D 下载类型声明文件
 */
 
 import axios from "axios";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
+
+// https://www.npmjs.com/package/nprogress
+NProgress.configure({ showSpinner: false });
 
 // 创建一个axios实例：功能和axios基本一致
 // request就近似看做axios就好
@@ -81,6 +88,8 @@ request.interceptors.request.use(
           params: { xxx }
         }
     */
+		// 开始进度条
+		NProgress.start();
 
 		// 每次发送请求之前都会触发当前函数。再次在headers中携带了token参数
 		// 所以真正请求时就有token参数了
@@ -130,6 +139,8 @@ request.interceptors.response.use(
 
         一般只需要使用data。响应体数据
     */
+		// 结束进度条
+		NProgress.done();
 
 		// 请求成功，并不代表功能成功
 		// 判断功能是否成功
@@ -138,6 +149,7 @@ request.interceptors.response.use(
 			return response.data.data;
 		} else {
 			// 功能失败：1. 将promise对象的状态改为失败状态 3. 返回失败的原因 response.data.message
+			alert(response.data.message);
 			return Promise.reject(response.data.message);
 		}
 	},
@@ -146,6 +158,10 @@ request.interceptors.response.use(
 		/*
       请求失败。error就是请求失败的原因
     */
+		// 结束进度条
+		NProgress.done();
+
+		alert(error);
 		return Promise.reject(error);
 	}
 );

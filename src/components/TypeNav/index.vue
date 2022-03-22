@@ -439,14 +439,14 @@ import { reqGetCategoryList } from "../../api/home";
 // });
 
 onMounted(async () => {
-	try {
-		const data = await reqGetCategoryList();
-		// 功能成功
-		console.log(data);
-	} catch (error) {
-		// 请求失败、功能失败
-		console.log(error);
-	}
+	// try {
+	const data = await reqGetCategoryList();
+	// 功能成功
+	console.log(data);
+	// } catch (error) {
+	// 	// 请求失败、功能失败
+	// 	console.log(error);
+	// }
 });
 </script>
 
