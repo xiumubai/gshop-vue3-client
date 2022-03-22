@@ -15,7 +15,7 @@
 			</nav>
 			<!-- 三级分类导航 -->
 			<div class="sort">
-				<div class="all-sort-list2">
+				<div class="all-sort-list2" @click="goSearch">
 					<!-- 
 						需求：点击三级分类，跳转到search路由，同时携带两个query参数
 							categoryName
@@ -36,7 +36,18 @@
 									>
 										{{ c2.categoryName }}
 									</router-link>
+								问题：生成太多组件了
+							
+							2. 编程式导航
 
+								<a @click="goSearch(c1.categoryName, c1.categoryId, 1)">
+									{{ c1.categoryName }}
+								</a>
+								问题：绑定事件太多了
+							
+							3. 事件委托 + 自定义属性
+								给他们父级元素绑定事件（只要绑定一个就好）
+								自定义属性：给元素绑定相应的属性，方便使用
 					 -->
 					<!-- 每一个item都是一个完整三级分类 -->
 					<div v-for="c1 in categoryList" :key="c1.categoryId" class="item bo">
@@ -48,9 +59,11 @@
 							>
 								{{ c1.categoryName }}
 							</router-link> -->
-							<router-link
+							<!-- <router-link
 								:to="{
+									// 因为将来如果携带params参数就只能使用name形式
 									name: 'Search',
+									// path: '/search',
 									query: {
 										categoryName: c1.categoryName,
 										category1Id: c1.categoryId,
@@ -58,7 +71,19 @@
 								}"
 							>
 								{{ c1.categoryName }}
-							</router-link>
+							</router-link> -->
+
+							<!-- <a @click="goSearch(c1.categoryName, c1.categoryId, 1)">
+								{{ c1.categoryName }}
+							</a> -->
+
+							<a
+								:data-name="c1.categoryName"
+								:data-id="c1.categoryId"
+								:data-level="1"
+							>
+								{{ c1.categoryName }}
+							</a>
 						</h3>
 						<div class="item-list clearfix">
 							<div class="subitem">
@@ -69,32 +94,24 @@
 								>
 									<!-- 二级分类 -->
 									<dt>
-										<router-link
-											:to="{
-												name: 'Search',
-												query: {
-													categoryName: c2.categoryName,
-													category2Id: c2.categoryId,
-												},
-											}"
+										<a
+											:data-name="c2.categoryName"
+											:data-id="c2.categoryId"
+											:data-level="2"
 										>
 											{{ c2.categoryName }}
-										</router-link>
+										</a>
 									</dt>
 									<!-- 三级分类 -->
 									<dd>
 										<em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-											<router-link
-												:to="{
-													name: 'Search',
-													query: {
-														categoryName: c3.categoryName,
-														category3Id: c3.categoryId,
-													},
-												}"
+											<a
+												:data-name="c3.categoryName"
+												:data-id="c3.categoryId"
+												:data-level="3"
 											>
 												{{ c3.categoryName }}
-											</router-link>
+											</a>
 										</em>
 									</dd>
 								</dl>
@@ -115,6 +132,7 @@ export default {
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { reqGetCategoryList } from "../../api/home";
 // 引入类型定义
 import type { CategoryList } from "./types";
@@ -147,6 +165,46 @@ onMounted(async () => {
 	// 	console.log(error);
 	// }
 });
+
+// 只触发一次, 性能更好
+const router = useRouter();
+// 三级分类跳转函数
+// const goSearch = (categoryName: string, categoryId: number, level: number) => {
+// 	// 编程式导航 --> router
+// 	router.push({
+// 		name: "Search",
+// 		query: {
+// 			categoryName,
+// 			// 当对象的属性是动态值，可以用[]赋值
+// 			[`category${level}Id`]: categoryId,
+// 		},
+// 	});
+// };
+
+// 自己数据自己定义类型
+// 别人的数据由别人定义类型
+// 第三方库：就要下载第三方库类型定义
+// DOM相关的，VSCODE全部定义好了，直接使用
+const goSearch = (e: MouseEvent) => {
+	// 触发事件目标元素 e.target
+	// 如何获取自定义属性（data-xxx）: e.target.dataset
+	// 联合类型只能读取公共的属性和方法，
+	// 想要读取某个类型的属性和方法，要使用类型断言
+	// HTMLAnchorElement就是a标签的类型定义
+	const { name, id, level } = (e.target as HTMLAnchorElement).dataset;
+
+	// 解决：点击空白区域跳转问题
+	// 因为点击空白区域不是a标签，就没有自定义属性
+	if (!name) return;
+
+	router.push({
+		name: "Search",
+		query: {
+			categoryName: name,
+			[`category${level}Id`]: id,
+		},
+	});
+};
 </script>
 
 <style lang="less">
@@ -185,23 +243,33 @@ onMounted(async () => {
 			left: 0;
 			top: 45px;
 			width: 210px;
-			height: 461px;
+			height: 480px;
 			position: absolute;
 			background: #fafafa;
 			z-index: 999;
+			a {
+				cursor: pointer;
+			}
 
 			.all-sort-list2 {
+				overflow: hidden;
+				height: 480px;
 				.item {
 					h3 {
 						line-height: 30px;
 						font-size: 14px;
 						font-weight: 400;
 						overflow: hidden;
-						padding: 0 20px;
 						margin: 0;
 
 						a {
+							display: block;
+							padding: 0 20px;
 							color: #333;
+						}
+
+						&:hover {
+							background-color: pink;
 						}
 					}
 
@@ -209,13 +277,14 @@ onMounted(async () => {
 						display: none;
 						position: absolute;
 						width: 734px;
-						min-height: 460px;
+						min-height: 480px;
 						height: 200px;
 						background: #f7f7f7;
 						left: 210px;
 						border: 1px solid #ddd;
 						top: 0;
 						z-index: 9999 !important;
+						overflow: hidden;
 
 						.subitem {
 							float: left;
