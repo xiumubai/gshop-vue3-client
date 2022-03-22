@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.26.1",
     "nprogress": "^0.2.0",
+    "swiper": "^8.0.7",
     "vue": "^3.2.25",
     "vue-router": "^4.0.14"
   },

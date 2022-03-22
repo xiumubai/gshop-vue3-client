@@ -1,15 +1,32 @@
 <template>
 	<TypeNav />
+	<!-- 列表 -->
+	<ListContainer />
+	<!-- 今日推荐 -->
+	<TodayRecommend />
+	<!-- 商品排行 -->
+	<Rank />
+	<!-- 猜你喜欢 -->
+	<Like />
+	<!-- 楼层 -->
+	<Floor />
+	<!-- 商标 -->
+	<Brand />
 </template>
 
 <script lang="ts">
-// 如果组件直接使用，不用取name，自动给组件取名称
-// 但是使用路由懒加载语法，没办法自动给组件取名称了，手动写name
 export default {
 	name: "Home",
 };
 </script>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import Brand from "./Brand/Brand.vue";
+import Floor from "./Floor/Floor.vue";
+import Like from "./Like/Like.vue";
+import ListContainer from "./ListContainer/ListContainer.vue";
+import Rank from "./Rank/Rank.vue";
+import TodayRecommend from "./TodayRecommend/TodayRecommend.vue";
+</script>
 
-<style></style>
+<style lang="less" scoped></style>
