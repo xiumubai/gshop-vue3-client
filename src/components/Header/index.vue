@@ -24,20 +24,44 @@
 			</router-link>
 
 			<form class="header-form">
-				<input type="text" />
-				<button>搜索</button>
+				<input v-model="keyword" type="text" />
+				<!-- form表单有默认提交行为，会刷新整个页面 -->
+				<button @click.prevent="goSearch">搜索</button>
 			</form>
 		</div>
 	</header>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: "Header",
 };
 </script>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const keyword = ref("");
+
+const router = useRouter();
+
+const goSearch = () => {
+	/*
+		params参数如果直接携带，组件最终可以通过route.params来获取
+		但是在地址栏中不会显示params参数
+
+		要想地址栏中显示params参数，必须进行路由配置 :xxx 才会显示
+	*/
+	router.push({
+		name: "Search",
+		// 携带params参数，必须使用命名路由，不能用path
+		params: {
+			keyword: keyword.value, // ref数据获取值，必须.value
+		},
+	});
+};
+</script>
 
 <style lang="less">
 // vite脚手架默认是支持css预处理器，但是必须安装相关的依赖才能使用

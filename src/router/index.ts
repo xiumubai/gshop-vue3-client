@@ -16,7 +16,7 @@ export default createRouter({
 			// },
 		},
 		{
-			path: "/search",
+			path: "/search/:keyword?",
 			name: "Search",
 			component: () => import("../views/search/index.vue"),
 			// meta: {
