@@ -62,6 +62,7 @@ export default {
     自动轮播：https://codesandbox.io/s/z1tzu?file=/src/App.vue
     无线轮播：https://codesandbox.io/s/11oys?file=/src/App.vue:71-83
 */
+import { defineProps } from "vue";
 // 引入Swiper基本组件
 import { Swiper, SwiperSlide } from "swiper/vue";
 // 想要具备其他功能，还需要引入其他组件
@@ -72,6 +73,11 @@ import "swiper/css";
 // 引入其他组件样式
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+
+// 声明接受props数据
+defineProps<{
+	imageList: any[];
+}>();
 
 // 定义好将来不会发生变化，就不需要定义成响应
 const modules = [Autoplay, Pagination, Navigation];
