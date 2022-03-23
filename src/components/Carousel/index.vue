@@ -26,17 +26,25 @@
 		:loop="true"
 		:modules="modules"
 	>
-		<SwiperSlide>
-			<img src="./images/banner1.jpg" alt="1" />
-		</SwiperSlide>
-		<SwiperSlide>
-			<img src="./images/banner2.jpg" alt="2" />
-		</SwiperSlide>
-		<SwiperSlide>
-			<img src="./images/banner3.jpg" alt="3" />
-		</SwiperSlide>
-		<SwiperSlide>
-			<img src="./images/banner4.jpg" alt="4" />
+		<!-- 
+			1. 过去直接使用图片 
+				<img src="./images/banner1.jpg" alt="1" />
+				vite脚手架在编译代码时，会识别img标签，会打包图片
+				所以最终能显示，可以使用
+
+			2. 现在一上来没有img
+				项目渲染完成了，再去请求图片，在渲染到页面上
+
+				vite脚手架在编译代码时，没有识别到img需要打包图片
+				所以没有打包（没有引入的资源就不会打包）
+				没有打包，就不能访问该资源
+
+				解决：想办法vite脚手架打包图片资源
+					将图片放入public中
+					因为public下面的资源不管使用不使用，都会被打包
+		-->
+		<SwiperSlide v-for="img in imageList" :key="img.id">
+			<img :src="img.imgUrl" :alt="img.imgName" />
 		</SwiperSlide>
 	</Swiper>
 </template>
@@ -68,6 +76,8 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 // 想要具备其他功能，还需要引入其他组件
 import { Autoplay, Pagination, Navigation } from "swiper";
 
+import type { ImageList } from "./types";
+
 // 引入组件的样式
 import "swiper/css";
 // 引入其他组件样式
@@ -76,7 +86,7 @@ import "swiper/css/navigation";
 
 // 声明接受props数据
 defineProps<{
-	imageList: any[];
+	imageList: ImageList;
 }>();
 
 // 定义好将来不会发生变化，就不需要定义成响应

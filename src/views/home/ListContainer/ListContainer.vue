@@ -3,7 +3,7 @@
 		<div class="sortList clearfix">
 			<div class="center">
 				<!-- banner轮播 -->
-				<Carousel />
+				<Carousel :imageList="bannerList" />
 			</div>
 			<div class="right">
 				<div class="news">
@@ -84,7 +84,18 @@ export default {
 };
 </script>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+import { reqGetBannerList } from "@/api/home";
+import type { ImageList } from "@/components/Carousel/types";
+
+const bannerList = ref<ImageList>([]);
+
+onMounted(async () => {
+	const data = await reqGetBannerList();
+	bannerList.value = data;
+});
+</script>
 
 <style lang="less" scoped>
 .list-container {
