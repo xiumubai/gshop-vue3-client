@@ -73,9 +73,10 @@ export default {
 <script lang="ts" setup>
 import { defineProps } from "vue";
 import Carousel from "@/components/Carousel/index.vue";
+import type { FloorItem } from "../types";
 
 defineProps<{
-	floor: any;
+	floor: FloorItem;
 }>();
 </script>
 

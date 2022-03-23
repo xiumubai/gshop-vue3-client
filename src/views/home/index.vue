@@ -29,8 +29,9 @@ import ListContainer from "./ListContainer/ListContainer.vue";
 import Rank from "./Rank/Rank.vue";
 import TodayRecommend from "./TodayRecommend/TodayRecommend.vue";
 import { reqGetFloorList } from "@/api/home";
+import type { FloorList } from "./types";
 
-const floorList = ref([]);
+const floorList = ref<FloorList>([]);
 
 onMounted(async () => {
 	const data = await reqGetFloorList();
