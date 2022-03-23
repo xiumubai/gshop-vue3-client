@@ -214,6 +214,7 @@ const goSearch = (e: MouseEvent) => {
 			categoryName: name,
 			[`category${level}Id`]: id,
 		},
+		params: route.params,
 	});
 };
 </script>

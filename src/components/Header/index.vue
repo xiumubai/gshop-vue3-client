@@ -39,12 +39,30 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
+
+// setup这个函数：相当于是beforeCreate created生命周期函数
+// setup函数就是在beforeCreate created生命周期函数时触发的
+// 初始化渲染阶段获取不到route.params.keyword参数的值
 
 const keyword = ref("");
 
-const router = useRouter();
+// 监视route
+// 初始化阶段获取不到值
+// 更新阶段一上来也不会触发
+// 只有监视 + { immediate: true } 才能一上来有值并触发
+watch(
+	route,
+	(route) => {
+		// route.params的数据都是联合类型
+		keyword.value = route.params.keyword as string;
+	},
+	{ immediate: true }
+);
 
 const goSearch = () => {
 	/*
@@ -59,6 +77,8 @@ const goSearch = () => {
 		params: {
 			keyword: keyword.value, // ref数据获取值，必须.value
 		},
+		// 也要携带query参数
+		query: route.query,
 	});
 };
 </script>
