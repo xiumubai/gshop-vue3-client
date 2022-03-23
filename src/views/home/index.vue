@@ -9,7 +9,7 @@
 	<!-- 猜你喜欢 -->
 	<Like />
 	<!-- 楼层 -->
-	<Floor />
+	<Floor v-for="floor in floorList" :key="floor.id" :floor="floor" />
 	<!-- 商标 -->
 	<Brand />
 </template>
@@ -21,12 +21,21 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import { onMounted, ref } from "vue";
 import Brand from "./Brand/Brand.vue";
 import Floor from "./Floor/Floor.vue";
 import Like from "./Like/Like.vue";
 import ListContainer from "./ListContainer/ListContainer.vue";
 import Rank from "./Rank/Rank.vue";
 import TodayRecommend from "./TodayRecommend/TodayRecommend.vue";
+import { reqGetFloorList } from "@/api/home";
+
+const floorList = ref([]);
+
+onMounted(async () => {
+	const data = await reqGetFloorList();
+	floorList.value = data;
+});
 </script>
 
 <style lang="less" scoped></style>

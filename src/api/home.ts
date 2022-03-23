@@ -18,3 +18,12 @@ export const reqGetBannerList = (): any => {
 		url: "/getBannerList", // 会自动添加/mockApi
 	});
 };
+
+// 获取首页Floor列表
+export const reqGetFloorList = (): any => {
+	// 未来：后端开发好接口后，需要修改使用request发送请求
+	return requestMock({
+		method: "GET",
+		url: "/getFloorList", // 会自动添加/mockApi
+	});
+};
