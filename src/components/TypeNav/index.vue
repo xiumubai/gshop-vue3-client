@@ -1,9 +1,9 @@
 <template>
 	<!-- 商品分类导航 -->
 	<div class="type">
-		<div class="container">
-			<h2 class="all">全部商品分类</h2>
-			<nav class="nav">
+		<div class="container" @mouseleave="isShow = false">
+			<h2 class="all" @mouseenter="isShow = true">全部商品分类</h2>
+			<nav class="nav" @mouseenter="isShow = false">
 				<a href="###">服装城</a>
 				<a href="###">美妆馆</a>
 				<a href="###">尚品汇超市</a>
@@ -13,8 +13,15 @@
 				<a href="###">有趣</a>
 				<a href="###">秒杀</a>
 			</nav>
-			<!-- 三级分类导航 -->
-			<div class="sort">
+			<!-- 
+				三级分类导航: 显示&隐藏 v-show
+					1. 默认是隐藏的，移入显示、移出隐藏
+					2. 首页永远都是显示，不会隐藏
+						其他页面才会有显示&隐藏的效果（search）
+
+						想办法让首页 v-show得值恒为true
+			-->
+			<div v-show="route.path === '/' || isShow" class="sort">
 				<div class="all-sort-list2" @click="goSearch">
 					<!-- 
 						需求：点击三级分类，跳转到search路由，同时携带两个query参数
@@ -132,10 +139,14 @@ export default {
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { reqGetCategoryList } from "../../api/home";
 // 引入类型定义
 import type { CategoryList } from "./types";
+
+// 三级分类的显示隐藏
+const isShow = ref(false);
+const route = useRoute();
 
 // mounted生命周期函数
 // onMounted(async () => {
