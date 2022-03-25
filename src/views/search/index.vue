@@ -119,10 +119,11 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive, watch } from "vue";
+import { useRoute } from "vue-router";
 import SearchSelector from "./SearchSelector/SearchSelector.vue";
 import { reqSearchGoodList } from "@/api/search";
-import type { TrademarkList, AttrsList, GoodsList } from './types'
+import type { TrademarkList, AttrsList, GoodsList } from "./types";
 
 // 品牌列表
 const trademarkList = ref<TrademarkList>([]);
@@ -133,12 +134,71 @@ const goodsList = ref<GoodsList>([]);
 // 总数
 const total = ref(0);
 
-onMounted(async () => {
-	const data = await reqSearchGoodList({});
+/*
+	使用reactive定义数据，将来操作数据可以 searchOption.xxx 直接操作
+	如果使用ref定义数据，将来操作数据需要 searchOption.value.xxx 操作，太麻烦了
+*/
+// 初始化所有搜索条件
+const searchOption = reactive({
+	// 分类id
+	// category1Id: undefined,
+	// category2Id: undefined,
+	// category3Id: undefined,
+	// 分类名称
+	// categoryName: "",
+	// 搜索关键字
+	// keyword: "",
+	// 以上条件可以不用存储，因为在query和params中携带了，直接从query和params中读取即可
+	// 平台属性列表
+	props: [],
+	// 品牌
+	trademark: "",
+	// 默认情况下：是需要综合排序 1: 综合,2: 价格 asc: 升序,desc: 降序
+	// 排序
+	order: "1:desc",
+	// 当前页码
+	pageNo: 1,
+	// 每页条数
+	pageSize: 5,
+});
+
+/*
+	完成搜索功能：
+		1. 分类搜索
+		2. 关键字搜索
+		3. 品牌搜索
+		4. 平台属性搜索
+		5. 排序搜索
+		6. 分页搜索
+
+	分析：搜索时要保留上次的搜索条件 + 当前的搜索条件一起搜索
+	解决：定义一个对象数据来存储搜索条件，将来搜索时，将存储搜索条件 + 当前的搜索条件一起搜索
+*/
+
+const route = useRoute();
+
+const searchGoodsList = async () => {
+	// 解决搜索条件
+	const option = {
+		...searchOption, // 品牌\平台属性\排序\分页
+		...route.query, // 分类
+		...route.params, // 关键字
+	};
+	const data = await reqSearchGoodList(option);
 	trademarkList.value = data.trademarkList;
 	attrsList.value = data.attrsList;
 	goodsList.value = data.goodsList;
 	total.value = data.total;
+};
+
+// 监视route，当route发生变化，说明query或params发生了变化
+// 说明用户更新了搜索参数，那么我们就要重新搜索
+watch(route, () => {
+	searchGoodsList();
+});
+
+onMounted(() => {
+	searchGoodsList();
 });
 </script>
 
