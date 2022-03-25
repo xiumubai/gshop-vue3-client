@@ -3,7 +3,7 @@
 		<TypeNav />
 		<div class="main">
 			<div class="py-container">
-				<!--bread-->
+				<!-- 搜索条件 -->
 				<div class="bread">
 					<ul class="fl sui-breadcrumb">
 						<li>
@@ -11,10 +11,25 @@
 						</li>
 					</ul>
 					<ul class="fl sui-tag">
-						<li class="with-x">手机</li>
-						<li class="with-x">iphone<i>×</i></li>
-						<li class="with-x">华为<i>×</i></li>
-						<li class="with-x">OPPO<i>×</i></li>
+						<li v-if="route.query.categoryName" class="with-x">
+							{{ route.query.categoryName }}
+							<i @click="removeCategory">×</i>
+						</li>
+
+						<li v-if="route.params.keyword" class="with-x">
+							{{ route.params.keyword }}
+							<i @click="removeKeyword">×</i>
+						</li>
+
+						<li v-if="searchOption.trademark" class="with-x">
+							{{ searchOption.trademark.split(":")[1] }}
+							<i @click="removeTrademark">×</i>
+						</li>
+
+						<li v-for="(prop, index) in searchOption.props" class="with-x">
+							{{ `${prop.split(":")[2]}: ${prop.split(":")[1]}` }}
+							<i @click="removeAttr(index)">×</i>
+						</li>
 					</ul>
 				</div>
 
@@ -125,7 +140,7 @@ export default {
 
 <script lang="ts" setup>
 import { onMounted, ref, reactive, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import SearchSelector from "./SearchSelector/SearchSelector.vue";
 import { reqSearchGoodList } from "@/api/search";
 import type { TrademarkList, AttrsList, GoodsList } from "./types";
@@ -230,6 +245,37 @@ const searchAttr = (attr: string) => {
 	searchOption.props.push(attr);
 	// 搜索
 	searchGoodsList();
+};
+
+// 删除品牌搜索条件
+const removeTrademark = () => {
+	searchOption.trademark = "";
+	// 搜索
+	searchGoodsList();
+};
+// 删除属性
+const removeAttr = (index: number) => {
+	searchOption.props.splice(index, 1);
+	// 搜索
+	searchGoodsList();
+};
+
+const router = useRouter();
+
+// 删除分类
+const removeCategory = () => {
+	router.push({
+		name: "Search",
+		params: route.params,
+	});
+};
+// 删除关键字
+const removeKeyword = () => {
+	// 当地址发生变化，会触发watch，重新搜索
+	router.push({
+		name: "Search",
+		query: route.query,
+	});
 };
 </script>
 
