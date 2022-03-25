@@ -47,20 +47,56 @@
 					<div class="sui-navbar">
 						<div class="navbar-inner filter">
 							<ul class="sui-nav">
-								<li class="active">
-									<a href="#">综合<i class="iconfont icon-rising"></i></a>
+								<li
+									:class="{
+										active: order[0] === '1',
+									}"
+									@click="setOrder('1')"
+								>
+									<a>
+										综合
+										<!-- <i
+											v-show="searchOption.order.split(':')[1] === 'asc'"
+											class="iconfont icon-rising"
+										></i>
+										<i
+											v-show="searchOption.order.split(':')[1] === 'desc'"
+											class="iconfont icon-falling"
+										></i> -->
+										<i
+											v-show="order[0] === '1'"
+											:class="[
+												'iconfont',
+												order[1] === 'asc' ? 'icon-rising' : 'icon-falling',
+											]"
+										></i>
+									</a>
 								</li>
 								<li>
-									<a href="#">销量</a>
+									<a>销量</a>
 								</li>
 								<li>
-									<a href="#">新品</a>
+									<a>新品</a>
 								</li>
 								<li>
-									<a href="#">评价</a>
+									<a>评价</a>
 								</li>
-								<li>
-									<a href="#">价格<i class="iconfont icon-falling"></i></a>
+								<li
+									:class="{
+										active: order[0] === '2',
+									}"
+									@click="setOrder('2')"
+								>
+									<a>
+										价格
+										<i
+											v-show="order[0] === '2'"
+											:class="[
+												'iconfont',
+												order[1] === 'asc' ? 'icon-rising' : 'icon-falling',
+											]"
+										></i>
+									</a>
 								</li>
 							</ul>
 						</div>
@@ -136,7 +172,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { onMounted, ref, reactive, watch } from "vue";
+import { onMounted, ref, reactive, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SearchSelector from "./SearchSelector/SearchSelector.vue";
 import { reqSearchGoodList } from "@/api/search";
@@ -173,7 +209,7 @@ const searchOption = reactive<searchGoodsListParams>({
 	trademark: "",
 	// 默认情况下：是需要综合排序 1: 综合,2: 价格 asc: 升序,desc: 降序
 	// 排序
-	order: "1:desc",
+	order: "1:asc",
 	// 当前页码
 	pageNo: 1,
 	// 每页条数
@@ -273,6 +309,34 @@ const removeKeyword = () => {
 		name: "Search",
 		query: route.query,
 	});
+};
+
+// 用来缓存order值
+const order = computed(() => {
+	return searchOption.order.split(":");
+});
+// 设置排序
+const setOrder = (orderName: string) => {
+	// 计算属性返回的是ref数据，需要用value取值
+	// orderName 1 或 2
+	// orderType asc 或 desc
+	let orderType;
+	const [oldOrderName, oldOrderType] = order.value;
+	/*
+		点击相同的取反，点击不同的用默认值降序
+	*/
+	if (oldOrderName === orderName) {
+		// 点击相同的取反
+		orderType = oldOrderType === "asc" ? "desc" : "asc";
+	} else {
+		// 点击不同的用默认值降序
+		orderType = "desc";
+	}
+
+	// 更新搜索条件
+	searchOption.order = `${orderName}:${orderType}`;
+	// 搜索
+	searchGoodsList();
 };
 </script>
 
