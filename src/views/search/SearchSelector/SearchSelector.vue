@@ -25,7 +25,12 @@
 			<!-- 属性值 -->
 			<div class="fl value">
 				<ul class="type-list">
-					<li v-for="(attrValue, index) in attr.attrValueList" :key="index">
+					<!-- 收集的数据由三部分组成：属性id:属性值:属性名 -->
+					<li
+						v-for="(attrValue, index) in attr.attrValueList"
+						:key="index"
+						@click="searchAttr(`${attr.attrId}:${attrValue}:${attr.attrName}`)"
+					>
 						<a>{{ attrValue }}</a>
 					</li>
 				</ul>
@@ -50,12 +55,16 @@ defineProps<{
 	attrsList: AttrsList;
 }>();
 // Vue3中所有事件默认都是DOM事件，除非声明接受才是自定义事件
-const emit = defineEmits(["searchTrademark"]);
+const emit = defineEmits(["searchTrademark", 'searchAttr']);
 
 // 搜索品牌
 const searchTrademark = (tm: string) => {
 	emit("searchTrademark", tm);
 };
+// 搜索属性
+const searchAttr = (attr: string) => {
+	emit("searchAttr", attr);
+}
 </script>
 
 <style lang="less" scoped>

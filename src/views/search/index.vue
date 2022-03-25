@@ -23,6 +23,7 @@
 					:trademarkList="trademarkList"
 					:attrsList="attrsList"
 					@searchTrademark="searchTrademark"
+					@searchAttr="searchAttr"
 				/>
 
 				<!--details-->
@@ -215,6 +216,18 @@ const searchTrademark = (tm: string) => {
 	}
 	// 更新搜索条件
 	searchOption.trademark = tm;
+	// 搜索
+	searchGoodsList();
+};
+
+// 搜索属性
+const searchAttr = (attr: string) => {
+	// 判断props中是否已存在attr属性
+	if (searchOption.props.includes(attr)) {
+		return;
+	}
+	// 更新搜索条件
+	searchOption.props.push(attr);
 	// 搜索
 	searchGoodsList();
 };
