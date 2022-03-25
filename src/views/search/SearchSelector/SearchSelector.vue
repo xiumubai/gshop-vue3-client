@@ -4,7 +4,14 @@
 			<div class="fl key brand">品牌</div>
 			<div class="value logos">
 				<ul class="logo-list">
-					<li v-for="tm in trademarkList" :key="tm.tmId">{{ tm.tmName }}</li>
+					<!-- 注意：发送请求要求的trademark参数：品牌id:品牌名称 -->
+					<li
+						v-for="tm in trademarkList"
+						:key="tm.tmId"
+						@click="searchTrademark(`${tm.tmId}:${tm.tmName}`)"
+					>
+						{{ tm.tmName }}
+					</li>
 				</ul>
 			</div>
 			<div class="ext">
@@ -35,13 +42,20 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 import type { TrademarkList, AttrsList } from "../types";
 
 defineProps<{
 	trademarkList: TrademarkList;
 	attrsList: AttrsList;
 }>();
+// Vue3中所有事件默认都是DOM事件，除非声明接受才是自定义事件
+const emit = defineEmits(["searchTrademark"]);
+
+// 搜索品牌
+const searchTrademark = (tm: string) => {
+	emit("searchTrademark", tm);
+};
 </script>
 
 <style lang="less" scoped>

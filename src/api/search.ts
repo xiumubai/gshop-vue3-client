@@ -1,14 +1,14 @@
 import request from "../utils/request";
 
-interface searchGoodsListParams {
+export interface searchGoodsListParams {
 	// 分类id
-	category1Id: number;
-	category2Id: number;
-	category3Id: number;
+	category1Id?: number;
+	category2Id?: number;
+	category3Id?: number;
 	// 分类名称
-	categoryName: string;
+	categoryName?: string;
 	// 搜索关键字
-	keyword: string;
+	keyword?: string;
 	// 平台属性列表
 	props: string[];
 	// 品牌

@@ -19,7 +19,11 @@
 				</div>
 
 				<!-- 品牌和平台属性 -->
-				<SearchSelector :trademarkList="trademarkList" :attrsList="attrsList" />
+				<SearchSelector
+					:trademarkList="trademarkList"
+					:attrsList="attrsList"
+					@searchTrademark="searchTrademark"
+				/>
 
 				<!--details-->
 				<div class="details clearfix">
@@ -54,7 +58,7 @@
 							<li v-for="goods in goodsList" :key="goods.id" class="yui3-u-1-5">
 								<div class="list-wrap">
 									<div class="p-img">
-										<a><img :src="goods.defaultImg" /></a>
+										<a><img :src="goods.defaultImg" class="goods-img" /></a>
 									</div>
 									<div class="price">
 										<strong>
@@ -124,6 +128,7 @@ import { useRoute } from "vue-router";
 import SearchSelector from "./SearchSelector/SearchSelector.vue";
 import { reqSearchGoodList } from "@/api/search";
 import type { TrademarkList, AttrsList, GoodsList } from "./types";
+import type { searchGoodsListParams } from "@/api/search";
 
 // 品牌列表
 const trademarkList = ref<TrademarkList>([]);
@@ -139,7 +144,7 @@ const total = ref(0);
 	如果使用ref定义数据，将来操作数据需要 searchOption.value.xxx 操作，太麻烦了
 */
 // 初始化所有搜索条件
-const searchOption = reactive({
+const searchOption = reactive<searchGoodsListParams>({
 	// 分类id
 	// category1Id: undefined,
 	// category2Id: undefined,
@@ -200,6 +205,19 @@ watch(route, () => {
 onMounted(() => {
 	searchGoodsList();
 });
+
+// 搜索品牌
+const searchTrademark = (tm: string) => {
+	// 判断上次的品牌条件 和 最新点击的品牌条件 是否相等
+	if (searchOption.trademark === tm) {
+		// 如果相等，说明点击同一个
+		return;
+	}
+	// 更新搜索条件
+	searchOption.trademark = tm;
+	// 搜索
+	searchGoodsList();
+};
 </script>
 
 <style lang="less" scoped>
@@ -345,8 +363,8 @@ onMounted(() => {
 									color: #666;
 
 									img {
-										max-width: 100%;
-										height: auto;
+										// max-width: 100%;
+										// height: auto;
 										vertical-align: middle;
 									}
 								}
@@ -533,5 +551,10 @@ onMounted(() => {
 			}
 		}
 	}
+}
+
+.goods-img {
+	width: 230px;
+	height: 250px;
 }
 </style>
