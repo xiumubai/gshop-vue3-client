@@ -164,6 +164,10 @@
 							v-model双向数据绑定
 								传递props数据：currentPage
 								传递更新数据的事件：update:currentPage
+
+							防抖函数：在单位时间内，函数最后一次调用生效
+							节流函数：在单位时间内，函数第一次调用生效
+								都是对函数的性能优化，让指定函数在单位时间内只触发一次
 						-->
 						<Pagination
 							v-model:currentPage="searchOption.pageNo"
@@ -188,6 +192,7 @@ export default {
 <script lang="ts" setup>
 import { onMounted, ref, reactive, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import debounce from "lodash/debounce";
 import SearchSelector from "./SearchSelector/SearchSelector.vue";
 import { reqSearchGoodList } from "@/api/search";
 import type { TrademarkList, AttrsList, GoodsList } from "./types";
@@ -245,7 +250,9 @@ const searchOption = reactive<searchGoodsListParams>({
 
 const route = useRoute();
 
-const searchGoodsList = async () => {
+// 使用防抖对函数性能进行优化
+// 减少函数调用的次数
+const searchGoodsList = debounce(async () => {
 	// 解决搜索条件
 	const option = {
 		...searchOption, // 品牌\平台属性\排序\分页
@@ -257,7 +264,7 @@ const searchGoodsList = async () => {
 	attrsList.value = data.attrsList;
 	goodsList.value = data.goodsList;
 	total.value = data.total;
-};
+}, 200);
 
 // 监视route，当route发生变化，说明query或params发生了变化
 // 说明用户更新了搜索参数，那么我们就要重新搜索
