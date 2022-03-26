@@ -4,11 +4,28 @@
 		<ul class="pager">
 			<li>1</li>
 			<li><i class="iconfont icon-ellipsis"></i></li>
-			<li>3</li>
-			<li>4</li>
-			<li>5</li>
-			<li>6</li>
-			<li>7</li>
+			<!-- 
+				遍历展示中间按钮：
+					1. 正常情况下：5个
+						start: 2
+						end: 6
+						显示5个按钮
+					2. 特殊情况下：0-4个
+						start: 2
+						end: 3
+						要显示2个按钮
+
+					所以要遍历的按钮数量：end - start + 1
+					显示的值：
+						item + start - 1
+						start + index
+			-->
+			<li
+				v-for="(item, index) in startEnd.end - startEnd.start + 1"
+				:key="item"
+			>
+				{{ startEnd.start + index }}
+			</li>
 			<li><i class="iconfont icon-ellipsis"></i></li>
 			<li>{{ totalPages }}</li>
 		</ul>
@@ -97,11 +114,20 @@ const totalPages = computed(() => {
 			end = 1
 		但是实际需求：中间按钮不需要显示
 		怎么办？
+			end - start + 1 === 0 这样不会遍历生成中间按钮
 */
 // 计算中间按钮（不包含1和不包含结尾）
 const startEnd = computed(() => {
 	// 最大值
 	const max = totalPages.value - 1;
+
+	if (totalPages.value <= 2) {
+		// 说明不需要展示中间按钮
+		return {
+			start: 1,
+			end: 0,
+		};
+	}
 
 	// 总页数小于7，不用计算start和end
 	// start一定是2
