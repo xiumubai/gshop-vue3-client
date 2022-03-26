@@ -47,6 +47,35 @@
 					<div class="sui-navbar">
 						<div class="navbar-inner filter">
 							<ul class="sui-nav">
+								<!--
+									order: 1:asc
+										orderName: 1 综合 2 价格
+										orderType: asc 升序 desc 降序  
+									1. active 高亮
+										1 综合高亮
+										2 价格高亮
+										:class="{
+											active: order[0] === '1',
+										}"
+										注意：类型是string
+
+									2. 图标显示&隐藏
+										1 综合图标显示，价格图标隐藏
+										2 价格图标显示，综合图标隐藏
+										v-show="order[0] === '1'"
+									
+									3. 切换图标
+										asc 升序 向上 icon-rising
+										desc 降序 向下 icon-falling
+										:class="[
+											'iconfont',
+											order[1] === 'asc' ? 'icon-rising' : 'icon-falling',
+										]"
+									
+									4. 绑定点击事件，切换排序方式
+										- 点击综合orderName设置为1，点击价格orderName设置为2
+										- 点击相同的取反，点击不同用desc
+								-->
 								<li
 									:class="{
 										active: order[0] === '1',
@@ -131,7 +160,11 @@
 					</div>
 					<!-- 分页器 -->
 					<div class="fr page">
-						<Pagination />
+						<Pagination
+							:currentPage="searchOption.pageNo"
+							:pageSize="searchOption.pageSize"
+							:total="total"
+						/>
 					</div>
 				</div>
 			</div>
