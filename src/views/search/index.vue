@@ -136,7 +136,16 @@
 							<li v-for="goods in goodsList" :key="goods.id" class="yui3-u-1-5">
 								<div class="list-wrap">
 									<div class="p-img">
-										<a><img :src="goods.defaultImg" class="goods-img" /></a>
+										<router-link
+											:to="{
+												name: 'Detail',
+												params: {
+													id: goods.id,
+												},
+											}"
+										>
+											<img :src="goods.defaultImg" class="goods-img" />
+										</router-link>
 									</div>
 									<div class="price">
 										<strong>
@@ -228,7 +237,7 @@ const searchOption = reactive<searchGoodsListParams>({
 	trademark: "",
 	// 默认情况下：是需要综合排序 1: 综合,2: 价格 asc: 升序,desc: 降序
 	// 排序
-	order: "1:asc",
+	order: "1:desc",
 	// 当前页码
 	pageNo: 1,
 	// 每页条数

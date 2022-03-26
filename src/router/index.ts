@@ -24,6 +24,11 @@ export default createRouter({
 			// },
 		},
 		{
+			path: "/detail/:id",
+			name: "Detail",
+			component: () => import("../views/detail/index.vue"),
+		},
+		{
 			path: "/login",
 			name: "Login",
 			component: () => import("../views/login/index.vue"),
@@ -51,4 +56,10 @@ export default createRouter({
 			redirect: "/",
 		},
 	],
+	// 滚动行为
+	// 当路由跳转时触发，返回值决定滚动条的位置
+	scrollBehavior() {
+		// 始终滚动到顶部
+		return { top: 0 };
+	},
 });
