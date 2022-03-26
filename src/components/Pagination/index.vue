@@ -1,9 +1,24 @@
 <template>
 	<div class="pagination">
-		<button class="btn-prev"><i class="iconfont icon-arrow-left"></i></button>
+		<button
+			:disabled="currentPage <= 1"
+			class="btn-prev"
+			@click="goPage(currentPage - 1)"
+		>
+			<i class="iconfont icon-arrow-left"></i>
+		</button>
 		<ul class="pager">
-			<li>1</li>
-			<li><i class="iconfont icon-ellipsis"></i></li>
+			<li
+				:class="{
+					active: currentPage === 1,
+				}"
+				@click="goPage(1)"
+			>
+				1
+			</li>
+			<li v-show="startEnd.start > 2">
+				<i class="iconfont icon-ellipsis"></i>
+			</li>
 			<!-- 
 				遍历展示中间按钮：
 					1. 正常情况下：5个
@@ -23,13 +38,33 @@
 			<li
 				v-for="(item, index) in startEnd.end - startEnd.start + 1"
 				:key="item"
+				:class="{
+					active: currentPage === startEnd.start + index,
+				}"
+				@click="goPage(startEnd.start + index)"
 			>
 				{{ startEnd.start + index }}
 			</li>
-			<li><i class="iconfont icon-ellipsis"></i></li>
-			<li>{{ totalPages }}</li>
+			<li v-show="startEnd.end < totalPages - 1">
+				<i class="iconfont icon-ellipsis"></i>
+			</li>
+			<li
+				v-if="totalPages > 1"
+				:class="{
+					active: currentPage === totalPages,
+				}"
+				@click="goPage(totalPages)"
+			>
+				{{ totalPages }}
+			</li>
 		</ul>
-		<button class="btn-next"><i class="iconfont icon-arrow-right"></i></button>
+		<button
+			:disabled="currentPage >= totalPages"
+			class="btn-next"
+			@click="goPage(currentPage + 1)"
+		>
+			<i class="iconfont icon-arrow-right"></i>
+		</button>
 		<select class="sizes">
 			<option value="5">每页 5 条</option>
 			<option value="10">每页 10 条</option>
@@ -56,6 +91,8 @@ const props = defineProps<{
 	pageSize: number;
 	total: number;
 }>();
+
+const emit = defineEmits(["update:currentPage", "update:pageSize"]);
 
 // 总页数
 const totalPages = computed(() => {
@@ -124,8 +161,8 @@ const startEnd = computed(() => {
 	if (totalPages.value <= 2) {
 		// 说明不需要展示中间按钮
 		return {
-			start: 1,
-			end: 0,
+			start: 2,
+			end: 1,
 		};
 	}
 
@@ -155,6 +192,24 @@ const startEnd = computed(() => {
 		end,
 	};
 });
+
+// const prev = () => {
+// 	// props数据是只读的，不能直接修改
+// 	// 修改父组件props数据
+// 	const currentPage = props.currentPage - 1;
+// 	// if (currentPage < 1) return;
+// 	emit("update:currentPage", currentPage);
+// };
+
+// const next = () => {
+// 	const currentPage = props.currentPage + 1;
+// 	// if (currentPage > totalPages.value) return;
+// 	emit("update:currentPage", currentPage);
+// };
+
+const goPage = (currentPage: number) => {
+	emit("update:currentPage", currentPage);
+};
 </script>
 
 <style lang="less">
@@ -178,6 +233,11 @@ const startEnd = computed(() => {
 	&:hover {
 		color: #409eff;
 	}
+	&:disabled {
+		color: #a8abb2;
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
 }
 
 .pager {
@@ -200,5 +260,9 @@ const startEnd = computed(() => {
 .sizes {
 	margin: 0 20px;
 	cursor: pointer;
+}
+
+.active {
+	color: #409eff;
 }
 </style>

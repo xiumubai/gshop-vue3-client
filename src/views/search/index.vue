@@ -160,9 +160,14 @@
 					</div>
 					<!-- 分页器 -->
 					<div class="fr page">
+						<!-- 
+							v-model双向数据绑定
+								传递props数据：currentPage
+								传递更新数据的事件：update:currentPage
+						-->
 						<Pagination
-							:currentPage="searchOption.pageNo"
-							:pageSize="searchOption.pageSize"
+							v-model:currentPage="searchOption.pageNo"
+							v-model:pageSize="searchOption.pageSize"
 							:total="total"
 						/>
 					</div>
