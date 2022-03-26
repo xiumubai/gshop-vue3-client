@@ -65,11 +65,11 @@
 		>
 			<i class="iconfont icon-arrow-right"></i>
 		</button>
-		<select class="sizes">
-			<option value="5">每页 5 条</option>
-			<option value="10">每页 10 条</option>
-			<option value="15">每页 15 条</option>
-			<option value="20">每页 20 条</option>
+		<select class="sizes" v-model="myPageSize">
+			<option :value="5">每页 5 条</option>
+			<option :value="10">每页 10 条</option>
+			<option :value="15">每页 15 条</option>
+			<option :value="20">每页 20 条</option>
 		</select>
 		<span>总数：{{ total }}</span>
 	</div>
@@ -92,11 +92,39 @@ const props = defineProps<{
 	total: number;
 }>();
 
-const emit = defineEmits(["update:currentPage", "update:pageSize"]);
+const emit = defineEmits([
+	"update:currentPage",
+	"update:pageSize",
+	"size-change",
+	"current-change",
+]);
 
 // 总页数
 const totalPages = computed(() => {
 	return Math.ceil(props.total / props.pageSize);
+});
+
+const myPageSize = computed({
+	get() {
+		return props.pageSize;
+	},
+	set(val: number) {
+		/*
+			如果在最后一页
+				比如第30页，每页10条，一共300条数据
+				切换到每页30条，一共只有10页
+					但是当前页码在30页，我们修正为10页
+
+			当修改每页条数时，如果currentPage>totalPages
+			就应该等于totalPages
+		*/
+		const totalPages = Math.ceil(props.total / val);
+		if (props.currentPage > totalPages) {
+			emit("update:currentPage", totalPages);
+		}
+		emit("update:pageSize", val);
+		emit("size-change", val);
+	},
 });
 
 /*
@@ -209,6 +237,7 @@ const startEnd = computed(() => {
 
 const goPage = (currentPage: number) => {
 	emit("update:currentPage", currentPage);
+	emit("current-change", currentPage);
 };
 </script>
 

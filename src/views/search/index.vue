@@ -169,6 +169,8 @@
 							v-model:currentPage="searchOption.pageNo"
 							v-model:pageSize="searchOption.pageSize"
 							:total="total"
+							@size-change="searchGoodsList"
+							@current-change="searchGoodsList"
 						/>
 					</div>
 				</div>
