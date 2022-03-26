@@ -241,7 +241,7 @@ const goPage = (currentPage: number) => {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .pagination {
 	display: flex;
 	align-items: center;
