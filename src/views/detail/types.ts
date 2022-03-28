@@ -7,10 +7,12 @@ export interface CategoryView {
 }
 
 export interface SkuInfo {
+	id?: number;
 	skuName: string;
 	skuDesc: string;
 	price: number;
 	skuImageList: ImageList;
+	skuDefaultImg: string;
 }
 
 export interface SpuSaleAttrValueItem {

@@ -34,10 +34,13 @@ import { ref, watch } from "vue";
 const props = defineProps<{
 	min: number;
 	max: number;
+	value: number;
 }>();
 
+const emit = defineEmits(["update:value"]);
+
 // 收集的数据
-const currentValue = ref(props.min);
+const currentValue = ref(props.value || props.min);
 
 const add = () => {
 	currentValue.value++;
@@ -75,24 +78,31 @@ const setCurrentValue = (e: Event) => {
 };
 
 watch(currentValue, (newVal, oldValue) => {
+	let value = newVal;
 	// 输入大于最大值的数，等于最大值
 	if (newVal > props.max) {
-		currentValue.value = props.max;
-		return;
+		// currentValue.value = props.max;
+		// return;
+		value = props.max;
 	}
 	// 输入小于最小值的数，等于最小值
 	if (newVal < props.min) {
-		currentValue.value = props.min;
-		return;
+		// currentValue.value = props.min;
+		// return;
+		value = props.min;
 	}
 	// 输入不是数字，等于上一次的结果
 	if (Number.isNaN(newVal)) {
-		currentValue.value = oldValue;
-		return;
+		// currentValue.value = oldValue;
+		// return;
+		value = oldValue;
 	}
-
 	// 输入是小数，取整
-	currentValue.value = Math.floor(newVal);
+	value = Math.floor(value);
+
+	// 统一赋值
+	currentValue.value = value; // 更新当前组件的值
+	emit("update:value", value); // 更新父组件的值
 });
 </script>
 

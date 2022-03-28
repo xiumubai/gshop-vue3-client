@@ -96,9 +96,10 @@
 							</dl>
 						</div>
 						<div class="cartWrap">
-							<InputNumber :min="1" :max="100" />
+							<!-- 因为InputNumber是一个表单项组件，设计时一般使用v-model来操作 -->
+							<InputNumber :min="1" :max="100" v-model:value="skuNum" />
 							<div class="add">
-								<a href="javascript:">加入购物车</a>
+								<a @click="addToCart">加入购物车</a>
 							</div>
 						</div>
 					</div>
@@ -344,10 +345,11 @@ export default {
 
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import ImageList from "./ImageList/index.vue";
 import Zoom from "./Zoom/index.vue";
 import { reqGetGoodsDetail } from "@/api/detail";
+import { reqAddToCart } from "@/api/shopcart";
 import type {
 	CategoryView,
 	SkuInfo,
@@ -371,6 +373,7 @@ const skuInfo = ref<SkuInfo>({
 	skuDesc: "",
 	price: 0,
 	skuImageList: [],
+	skuDefaultImg: "",
 });
 // 销售属性列表
 const spuSaleAttrList = ref<SpuSaleAttrList>([]);
@@ -397,6 +400,27 @@ const setIsChecked = (
 	// 将当前点击的销售属性isChecked设置为1
 	saleAttrValue.isChecked = "1";
 	// 发送请求
+};
+
+const router = useRouter();
+const skuNum = ref(1);
+
+// 加入购物车
+const addToCart = async () => {
+	await reqAddToCart(skuInfo.value.id as number, skuNum.value);
+	// 将数据持久化存储起来
+	// localStorage只能储存字符串数据，不能存对象
+	localStorage.setItem(
+		"goods",
+		JSON.stringify({
+			skuName: skuInfo.value.skuName, // 名称
+			price: skuInfo.value.price, // 价格
+			skuNum: skuNum.value, // 数量
+			skuDefaultImg: skuInfo.value.skuDefaultImg, // 图片
+		})
+	);
+	// 跳转加入购物车成功
+	router.push("/addcartsuccess");
 };
 </script>
 

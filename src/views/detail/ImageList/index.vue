@@ -3,21 +3,23 @@
 		slidesPerView 一页显示几张轮播图
 		slidesPerGroup 每次轮播时，轮播几张图片
 	-->
-	<Swiper
-		:slidesPerView="5"
-		:slidesPerGroup="5"
-		:navigation="true"
-		:modules="modules"
-	>
-		<SwiperSlide v-for="(img, index) in imageList" :key="img.id">
-			<img
-				:class="{ active: currentIndex === index }"
-				:src="img.imgUrl"
-				:alt="img.imgName"
-				@click="emit('update:currentIndex', index)"
-			/>
-		</SwiperSlide>
-	</Swiper>
+	<div class="detail-carousel">
+		<Swiper
+			:slidesPerView="5"
+			:slidesPerGroup="5"
+			:navigation="true"
+			:modules="modules"
+		>
+			<SwiperSlide v-for="(img, index) in imageList" :key="img.id">
+				<img
+					:class="{ active: currentIndex === index }"
+					:src="img.imgUrl"
+					:alt="img.imgName"
+					@click="emit('update:currentIndex', index)"
+				/>
+			</SwiperSlide>
+		</Swiper>
+	</div>
 </template>
 
 <script lang="ts">
@@ -53,19 +55,19 @@ const modules = [Navigation];
 /* 
 	当写lang="less"会做css的tree shaking：自动去除当前组件没有引用的样式代码
 */
-.swiper {
+.detail-carousel .swiper {
 	height: 56px;
 	width: 412px;
 	box-sizing: border-box;
 	padding: 0 12px;
 }
 
-.swiper-slide {
+.detail-carousel .swiper-slide {
 	width: 56px;
 	height: 56px;
 }
 
-.swiper-slide img {
+.detail-carousel .swiper-slide img {
 	border: 1px solid #ccc;
 	padding: 2px;
 	width: 50px;
@@ -73,28 +75,28 @@ const modules = [Navigation];
 	display: block;
 }
 
-.swiper-slide img.active {
+.detail-carousel .swiper-slide img.active {
 	border: 2px solid #f60;
 	padding: 1px;
 }
 
-.swiper-slide img:hover {
+.detail-carousel .swiper-slide img:hover {
 	border: 2px solid #f60;
 	padding: 1px;
 }
 
-.swiper-button-next {
+.detail-carousel .swiper-button-next {
 	left: auto;
 	right: 0;
 }
 
-.swiper-button-prev {
+.detail-carousel .swiper-button-prev {
 	left: 0;
 	right: auto;
 }
 
-.swiper-button-next,
-.swiper-button-prev {
+.detail-carousel .swiper-button-next,
+.detail-carousel .swiper-button-prev {
 	box-sizing: border-box;
 	width: 12px;
 	height: 56px;
@@ -104,14 +106,14 @@ const modules = [Navigation];
 	margin-top: 0;
 }
 
-.swiper-button-next::after,
-.swiper-button-prev::after {
+.detail-carousel .swiper-button-next::after,
+.detail-carousel .swiper-button-prev::after {
 	font-size: 12px;
 	line-height: 56px;
 	text-align: center;
 }
 
-.swiper-button-lock {
+.detail-carousel .swiper-button-lock {
 	display: block;
 }
 </style>
