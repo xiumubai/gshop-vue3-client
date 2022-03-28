@@ -8,7 +8,7 @@
 
 			<ul class="header-nav">
 				<li>我的订单</li>
-				<li>我的购物车</li>
+				<li><router-link to="/shopcart">我的购物车</router-link></li>
 				<li>我的尚品汇</li>
 				<li>尚品汇会员</li>
 				<li>企业采购</li>

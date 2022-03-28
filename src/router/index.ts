@@ -34,6 +34,11 @@ export default createRouter({
 			component: () => import("../views/addCartSuccess/index.vue"),
 		},
 		{
+			path: "/shopcart",
+			name: "ShopCart",
+			component: () => import("../views/shopcart/index.vue"),
+		},
+		{
 			path: "/login",
 			name: "Login",
 			component: () => import("../views/login/index.vue"),

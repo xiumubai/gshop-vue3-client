@@ -7,3 +7,11 @@ export const reqAddToCart = (skuId: number, skuNum: number): any => {
 		url: `/cart/addToCart/${skuId}/${skuNum}`,
 	});
 };
+
+// 获取购物车列表
+export const reqGetCartList = () => {
+	return request({
+		method: "GET",
+		url: `/cart/cartList`,
+	});
+};
