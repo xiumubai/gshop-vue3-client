@@ -1,7 +1,7 @@
 <template>
 	<div class="spec-preview">
 		<!-- 小图 -->
-		<img src="../images/s1.png" />
+		<img :src="img.imgUrl" :alt="img.imgName" />
 		<!-- 小图区域 -->
 		<div class="event" @mousemove="move"></div>
 		<!-- 大图 -->
@@ -11,7 +11,8 @@
         2倍：大图是小图大小的2倍
       -->
 			<img
-				src="../images/s1.png"
+				:src="img.imgUrl"
+				:alt="img.imgName"
 				:style="{ left: -2 * left + 'px', top: -2 * top + 'px' }"
 			/>
 		</div>
@@ -29,9 +30,14 @@ export default {
 <script lang="ts" setup>
 import { ref } from "vue";
 import throttle from "lodash/throttle";
+import type { ImageItem } from "@/components/Carousel/types";
 
 const left = ref(0);
 const top = ref(0);
+
+defineProps<{
+	img: ImageItem;
+}>();
 
 /*
   debounce防抖：分页器

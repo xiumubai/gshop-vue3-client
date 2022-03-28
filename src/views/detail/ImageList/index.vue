@@ -1,5 +1,23 @@
 <template>
-	<div>轮播图</div>
+	<!-- 
+		slidesPerView 一页显示几张轮播图
+		slidesPerGroup 每次轮播时，轮播几张图片
+	-->
+	<Swiper
+		:slidesPerView="5"
+		:slidesPerGroup="5"
+		:navigation="true"
+		:modules="modules"
+	>
+		<SwiperSlide v-for="(img, index) in imageList" :key="img.id">
+			<img
+				:class="{ active: currentIndex === index }"
+				:src="img.imgUrl"
+				:alt="img.imgName"
+				@click="emit('update:currentIndex', index)"
+			/>
+		</SwiperSlide>
+	</Swiper>
 </template>
 
 <script lang="ts">
@@ -8,60 +26,92 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
-.swiper-container {
+<script lang="ts" setup>
+// 引入Swiper基本组件
+import { Swiper, SwiperSlide } from "swiper/vue";
+// 想要具备其他功能，还需要引入其他组件
+import { Navigation } from "swiper";
+import type { ImageList } from "@/components/Carousel/types";
+
+// 引入组件的样式
+import "swiper/css";
+// 引入其他组件样式
+import "swiper/css/navigation";
+
+// 声明接受props数据
+defineProps<{
+	imageList: ImageList;
+	currentIndex: number;
+}>();
+
+const emit = defineEmits(["update:currentIndex"]);
+
+const modules = [Navigation];
+</script>
+
+<style>
+/* 
+	当写lang="less"会做css的tree shaking：自动去除当前组件没有引用的样式代码
+*/
+.swiper {
 	height: 56px;
 	width: 412px;
 	box-sizing: border-box;
 	padding: 0 12px;
+}
 
-	.swiper-slide {
-		width: 56px;
-		height: 56px;
+.swiper-slide {
+	width: 56px;
+	height: 56px;
+}
 
-		img {
-			width: 100%;
-			height: 100%;
-			border: 1px solid #ccc;
-			padding: 2px;
-			width: 50px;
-			height: 50px;
-			display: block;
+.swiper-slide img {
+	border: 1px solid #ccc;
+	padding: 2px;
+	width: 50px;
+	height: 50px;
+	display: block;
+}
 
-			&.active {
-				border: 2px solid #f60;
-				padding: 1px;
-			}
+.swiper-slide img.active {
+	border: 2px solid #f60;
+	padding: 1px;
+}
 
-			&:hover {
-				border: 2px solid #f60;
-				padding: 1px;
-			}
-		}
-	}
+.swiper-slide img:hover {
+	border: 2px solid #f60;
+	padding: 1px;
+}
 
-	.swiper-button-next {
-		left: auto;
-		right: 0;
-	}
+.swiper-button-next {
+	left: auto;
+	right: 0;
+}
 
-	.swiper-button-prev {
-		left: 0;
-		right: auto;
-	}
+.swiper-button-prev {
+	left: 0;
+	right: auto;
+}
 
-	.swiper-button-next,
-	.swiper-button-prev {
-		box-sizing: border-box;
-		width: 12px;
-		height: 56px;
-		background: rgb(235, 235, 235);
-		border: 1px solid rgb(204, 204, 204);
-		top: 0;
-		margin-top: 0;
-		&::after {
-			font-size: 12px;
-		}
-	}
+.swiper-button-next,
+.swiper-button-prev {
+	box-sizing: border-box;
+	width: 12px;
+	height: 56px;
+	background: rgb(235, 235, 235);
+	border: 1px solid rgb(204, 204, 204);
+	top: 0;
+	margin-top: 0;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+	font-size: 12px;
+	line-height: 56px;
+	text-align: center;
+}
+
+.swiper-button-lock {
+	display: block;
 }
 </style>

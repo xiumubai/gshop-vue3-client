@@ -16,9 +16,13 @@
 				<!-- 左侧放大镜区域 -->
 				<div class="previewWrap">
 					<!--放大镜效果-->
-					<Zoom />
+					<!-- TypeError: Cannot read properties of undefined (reading 'undefined') -->
+					<Zoom :img="skuInfo.skuImageList[currentIndex] || {}" />
 					<!-- 轮播图 -->
-					<ImageList />
+					<ImageList
+						:imageList="skuInfo.skuImageList"
+						v-model:currentIndex="currentIndex"
+					/>
 				</div>
 				<!-- 右侧选择区域布局 -->
 				<div class="InfoWrap">
@@ -345,6 +349,9 @@ import Zoom from "./Zoom/index.vue";
 import { reqGetGoodsDetail } from "@/api/detail";
 import type { CategoryView, SkuInfo, SpuSaleAttrList } from "./types";
 
+// 当前展示图片下标
+const currentIndex = ref(0);
+
 // 分类导航
 const categoryView = ref<CategoryView>({
 	category1Name: "",
@@ -356,6 +363,7 @@ const skuInfo = ref<SkuInfo>({
 	skuName: "",
 	skuDesc: "",
 	price: 0,
+	skuImageList: [],
 });
 // 销售属性列表
 const spuSaleAttrList = ref<SpuSaleAttrList>([]);
