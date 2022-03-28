@@ -84,7 +84,12 @@
 								<dd
 									v-for="saleAttrValue in saleAttr.spuSaleAttrValueList"
 									:key="saleAttrValue.id"
-									class="active"
+									:class="{
+										active: saleAttrValue.isChecked === '1',
+									}"
+									@click="
+										setIsChecked(saleAttr.spuSaleAttrValueList, saleAttrValue)
+									"
 								>
 									{{ saleAttrValue.saleAttrValueName }}
 								</dd>
@@ -347,7 +352,13 @@ import { useRoute } from "vue-router";
 import ImageList from "./ImageList/index.vue";
 import Zoom from "./Zoom/index.vue";
 import { reqGetGoodsDetail } from "@/api/detail";
-import type { CategoryView, SkuInfo, SpuSaleAttrList } from "./types";
+import type {
+	CategoryView,
+	SkuInfo,
+	SpuSaleAttrList,
+	SpuSaleAttrValueList,
+	SpuSaleAttrValueItem,
+} from "./types";
 
 // 当前展示图片下标
 const currentIndex = ref(0);
@@ -377,6 +388,20 @@ onMounted(async () => {
 	skuInfo.value = data.skuInfo;
 	spuSaleAttrList.value = data.spuSaleAttrList;
 });
+
+// 设置销售属性
+const setIsChecked = (
+	saleAttrValueList: SpuSaleAttrValueList, // 销售属性值列表
+	saleAttrValue: SpuSaleAttrValueItem // 销售属性值对象
+) => {
+	// 将其他的销售属性isChecked设置为0
+	saleAttrValueList.forEach((saleAttrValue: SpuSaleAttrValueItem) => {
+		saleAttrValue.isChecked = "0";
+	});
+	// 将当前点击的销售属性isChecked设置为1
+	saleAttrValue.isChecked = "1";
+	// 发送请求
+};
 </script>
 
 <style lang="less" scoped>

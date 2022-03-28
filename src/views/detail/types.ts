@@ -13,12 +13,13 @@ export interface SkuInfo {
 	skuImageList: ImageList;
 }
 
-interface SpuSaleAttrValueItem {
+export interface SpuSaleAttrValueItem {
 	id: number;
 	saleAttrValueName: string;
+	isChecked: string;
 }
 
-type SpuSaleAttrValueList = SpuSaleAttrValueItem[];
+export type SpuSaleAttrValueList = SpuSaleAttrValueItem[];
 
 interface SpuSaleAttrItem {
 	id: number;
