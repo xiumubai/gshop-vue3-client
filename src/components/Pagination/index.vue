@@ -236,7 +236,9 @@ const startEnd = computed(() => {
 // };
 
 const goPage = (currentPage: number) => {
+	// 此时会修改父组件的currentPage，更新为最新的值
 	emit("update:currentPage", currentPage);
+	// 发送请求，发送请求时会拿到currentPage发送请求
 	emit("current-change", currentPage);
 };
 </script>
