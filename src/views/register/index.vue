@@ -24,13 +24,21 @@
 						name 表单项名称
 						rules 表单校验规则
 					-->
-					<Field name="phone" :rules="validatePhone" />
+					<Field name="phone" :rules="validatePhone" v-model="phone" />
 					<span class="error-msg">{{ errors.phone }}</span>
 					<!-- <ErrorMessage name="phone" /> -->
 				</div>
 				<div class="content">
 					<label>验证码:</label>
 					<Field name="code" :rules="validateCode" />
+					<button
+						:disabled="!phoneReg.test(phone) || isSendCode"
+						type="button"
+						@click="sendCode"
+					>
+						{{ isSendCode ? `还剩${time}s` : "发送验证码" }}
+					</button>
+
 					<span class="error-msg">{{ errors.code }}</span>
 				</div>
 				<div class="content">
@@ -85,22 +93,40 @@ export default {
 </script>
 
 <script lang="ts" setup>
-// import { reactive } from "vue";
+import { ref } from "vue";
 // https://vee-validate.logaretm.com/v4/tutorials/basics#displaying-error-messages
 import {
 	Field,
 	Form,
 	// ErrorMessage
 } from "vee-validate";
+import { reqSendCode } from "@/api/user";
 
-// // 表单数据
-// const user = reactive({
-// 	phone: "",
-// 	code: "",
-// 	password: "",
-// 	rePassword: "",
-// 	isAgree: false,
-// });
+// 表单数据
+const phone = ref("");
+const time = ref(60);
+const isSendCode = ref(false);
+
+// 发送验证码
+const sendCode = async () => {
+	// 发送验证码
+
+	isSendCode.value = true;
+	// 倒计时效果
+	const timer = setInterval(() => {
+		// 每隔一秒time--
+		time.value--;
+		if (time.value <= 0) {
+			// 倒计时结束了
+			clearInterval(timer);
+			time.value = 60;
+			isSendCode.value = false;
+		}
+	}, 1000);
+
+	const code = await reqSendCode(phone.value);
+	console.log(code);
+};
 
 /*
 	去npm搜vue validate关键字 --> vee-validate
@@ -303,6 +329,11 @@ const validateIsAgree = (value: boolean) => {
 				margin: 15px 0;
 			}
 		}
+	}
+
+	button:disabled {
+		color: #ccc;
+		cursor: not-allowed;
 	}
 }
 </style>
