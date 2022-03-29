@@ -14,24 +14,32 @@
 					</ul>
 
 					<div class="content">
-						<form action="##">
+						<Form @submit="login" v-slot="{ errors }">
 							<div class="input-text clearFix">
-								<span></span>
-								<input type="text" placeholder="邮箱/用户名/手机号" />
+								<Field
+									name="phone"
+									:rules="validatePhone"
+									placeholder="邮箱/用户名/手机号"
+								/>
+								<div style="color: red">{{ errors.phone }}</div>
 							</div>
 							<div class="input-text clearFix">
-								<span class="pwd"></span>
-								<input type="text" placeholder="请输入密码" />
+								<Field
+									name="password"
+									:rules="validatePassword"
+									placeholder="密码"
+								/>
+								<div style="color: red">{{ errors.password }}</div>
 							</div>
 							<div class="setting clearFix">
 								<label class="checkbox inline">
-									<input name="m1" type="checkbox" value="2" checked="" />
+									<input name="m1" type="checkbox" :value="true" />
 									自动登录
 								</label>
 								<span class="forget">忘记密码？</span>
 							</div>
 							<button class="btn">登&nbsp;&nbsp;录</button>
-						</form>
+						</Form>
 
 						<div class="call clearFix">
 							<ul>
@@ -72,7 +80,47 @@ export default {
 };
 </script>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { Form, Field } from "vee-validate";
+import { useRouter } from "vue-router";
+import { reqLogin } from "@/api/user";
+
+const router = useRouter();
+
+const login = async (values: any) => {
+	const data = await reqLogin(values.phone, values.password);
+	console.log(data); // 用户数据
+	router.push("/");
+};
+
+const phoneReg = /1[3-9][0-9]{9}/;
+// 定义表单校验规则
+const validatePhone = (value: string) => {
+	if (!value) {
+		return "请输入手机号";
+	}
+	// 表单校验失败，返回值就是失败原因
+	if (!phoneReg.test(value)) {
+		return "手机号不符合规范";
+	}
+	// return 'xxxx'
+	// 表单校验通过
+	return true;
+};
+
+const passwordReg = /[a-zA-Z0-9_]{6,18}/;
+const validatePassword = (value: string) => {
+	if (!value) {
+		return "请输入密码";
+	}
+	// 表单校验失败，返回值就是失败原因
+	if (!passwordReg.test(value)) {
+		return "密码不符合规范";
+	}
+	// 表单校验通过
+	return true;
+};
+</script>
 
 <style lang="less" scoped>
 .login-container {
@@ -155,11 +203,11 @@ export default {
 						}
 
 						input {
-							width: 302px;
+							width: 100%;
 							height: 32px;
 							box-sizing: border-box;
 							border: 1px solid #ccc;
-							border-left: none;
+							// border-left: none;
 							float: left;
 							padding-top: 6px;
 							padding-bottom: 6px;

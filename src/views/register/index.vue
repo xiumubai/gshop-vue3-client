@@ -99,8 +99,11 @@ import {
 	Field,
 	Form,
 	// ErrorMessage
+	SubmissionHandler,
 } from "vee-validate";
-import { reqSendCode } from "@/api/user";
+import { useRouter } from "vue-router";
+import { reqSendCode, reqRegister } from "@/api/user";
+import type { User, UserForm } from "./types";
 
 // 表单数据
 const phone = ref("");
@@ -148,11 +151,14 @@ const sendCode = async () => {
 				checkbox需要指定value
 				<Field name="isAgress" :rules="validatePhone" type="checkbox" :value="true"/>
 */
-
+const router = useRouter();
 // 注册
-const register = (values) => {
+// const register: SubmissionHandler = async (values) => {
+const register = async (values: any) => {
 	// values 整个表单收集的数据
-	console.log(values);
+	const { phone, code, password } = values;
+	await reqRegister({ phone, code, password });
+	router.push("/login");
 };
 
 const phoneReg = /1[3-9][0-9]{9}/;
@@ -196,7 +202,7 @@ const validatePassword = (value: string) => {
 	return true;
 };
 
-const validateRePassword = (value: string, { form }) => {
+const validateRePassword = (value: string, { form }: UserForm) => {
 	if (!value) {
 		return "请输入确认密码";
 	}
