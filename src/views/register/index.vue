@@ -110,7 +110,6 @@ const isSendCode = ref(false);
 // 发送验证码
 const sendCode = async () => {
 	// 发送验证码
-
 	isSendCode.value = true;
 	// 倒计时效果
 	const timer = setInterval(() => {
@@ -124,6 +123,7 @@ const sendCode = async () => {
 		}
 	}, 1000);
 
+	// 正常情况下：验证码不会返回到客户端，只会发到手机上
 	const code = await reqSendCode(phone.value);
 	console.log(code);
 };
