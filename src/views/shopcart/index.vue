@@ -11,7 +11,11 @@
 				<div class="cart-th6">操作</div>
 			</div>
 			<div class="cart-body">
-				<ul v-for="goods in goodsList" :key="goods.id" class="cart-list">
+				<ul
+					v-for="(goods, index) in goodsList"
+					:key="goods.id"
+					class="cart-list"
+				>
 					<li class="cart-list-con1">
 						<!-- <input
 							type="checkbox"
@@ -25,6 +29,7 @@
 							type="checkbox"
 							name="chk_list"
 							:checked="!!goods.isChecked"
+							@change="updateIsChecked(goods, 1 - goods.isChecked)"
 						/>
 					</li>
 					<li class="cart-list-con2">
@@ -62,7 +67,7 @@
 						<span class="sum">{{ goods.skuPrice * goods.skuNum }}</span>
 					</li>
 					<li class="cart-list-con7">
-						<a class="sindelet">删除</a>
+						<a class="sindelet" @click="delGoods(goods.skuId, index)">删除</a>
 						<br />
 						<a>移到收藏</a>
 					</li>
@@ -71,19 +76,21 @@
 		</div>
 		<div class="cart-tool">
 			<div class="select-all">
-				<input class="chooseAll" type="checkbox" />
+				<input class="chooseAll" type="checkbox" v-model="isCheckAll" />
 				<span>全选</span>
 			</div>
 			<div class="option">
-				<a href="#none">删除选中的商品</a>
-				<a href="#none">移到我的关注</a>
-				<a href="#none">清除下柜商品</a>
+				<a @click="patchDelGoods">删除选中的商品</a>
+				<a>移到我的关注</a>
+				<a>清除下柜商品</a>
 			</div>
 			<div class="money-box">
-				<div class="chosed">已选择 <span>0</span>件商品</div>
+				<div class="chosed">
+					已选择 <span> {{ allCheckedNum }} </span>件商品
+				</div>
 				<div class="sumprice">
 					<em>总价（不含运费） ：</em>
-					<i class="summoney">0</i>
+					<i class="summoney">{{ totalPrice }} </i>
 				</div>
 				<div class="sumbtn">
 					<a class="sum-btn" href="###" target="_blank">结算</a>
@@ -100,8 +107,14 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import { reqGetCartList, reqAddToCart } from "@/api/shopcart";
+import { onMounted, ref, computed } from "vue";
+import debounce from "lodash/debounce";
+import {
+	reqGetCartList,
+	reqAddToCart,
+	reqUpdateIsChecked,
+	reqDeleteCart,
+} from "@/api/shopcart";
 import InputNumber from "@/components/InputNumber/index.vue";
 import type { GoodsList, GoodsItem } from "./types";
 
@@ -117,14 +130,69 @@ onMounted(async () => {
 });
 
 // 更新商品数量
-const updateGoodsSkuNum = async (goods: GoodsItem, newSkuNum: number) => {
-	// skuId: 更新商品的id
-	// console.log(skuId, newSkuNum);
-	// 发送请求，更新服务器数据
-	await reqAddToCart(goods.skuId, newSkuNum - goods.skuNum);
-	// 更新客户端数据，计算总价才会发生变化
-	goods.skuNum = newSkuNum;
+const updateGoodsSkuNum = debounce(
+	async (goods: GoodsItem, newSkuNum: number) => {
+		// skuId: 更新商品的id
+		// console.log(skuId, newSkuNum);
+		// 发送请求，更新服务器数据
+		await reqAddToCart(goods.skuId, newSkuNum - goods.skuNum);
+		// 更新客户端数据，计算总价才会发生变化
+		goods.skuNum = newSkuNum;
+	},
+	200
+);
+
+// 单选
+const updateIsChecked = async (goods: GoodsItem, isChecked: number) => {
+	// reqUpdateIsChecked(goods.skuId, goods.isChecked ? 0 : 1);
+	// const isChecked = 1 - goods.isChecked;
+	await reqUpdateIsChecked(goods.skuId, isChecked);
+	// 更新客户端
+	goods.isChecked = isChecked;
 };
+
+const isCheckAll = computed({
+	get() {
+		return goodsList.value.every((goods) => goods.isChecked);
+	},
+	set(val: boolean) {
+		const isChecked = val ? 1 : 0;
+		goodsList.value.forEach((goods) => {
+			// 相等的，就没必要发送请求更新数据
+			if (goods.isChecked === isChecked) return;
+			updateIsChecked(goods, isChecked);
+		});
+	},
+});
+
+// 删除
+const delGoods = async (skuId: number, index: number) => {
+	await reqDeleteCart(skuId);
+	goodsList.value.splice(index, 1);
+};
+
+// 批量删除
+const patchDelGoods = async () => {
+	goodsList.value.forEach((goods, index) => {
+		if (goods.isChecked) {
+			delGoods(goods.skuId, index);
+		}
+	});
+};
+
+// 已选择商品数量
+const allCheckedNum = computed(() => {
+	// return goodsList.value.reduce((p, c) => {
+	// 	return p + c.isChecked;
+	// }, 0);
+	return goodsList.value.reduce((p, c) => p + c.isChecked, 0);
+});
+// 总价
+const totalPrice = computed(() => {
+	return goodsList.value.reduce((p, c) => {
+		return p + (c.isChecked ? c.skuNum * c.skuPrice : 0);
+	}, 0);
+});
 </script>
 
 <style lang="less" scoped>
