@@ -116,9 +116,11 @@ import {
 
 			每个表单项使用Field组件：
 				name是表单项名称
-				rules是表单校验规则
+				rules是表单校验规则（验证规则函数可以获取整个表单的数据）
 				<Field name="phone" :rules="validatePhone" />
 
+				checkbox需要指定value
+				<Field name="isAgress" :rules="validatePhone" type="checkbox" :value="true"/>
 */
 
 // 注册
