@@ -106,7 +106,7 @@ watch(currentValue, (newVal, oldValue) => {
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .controls {
 	width: 60px;
 	position: relative;
