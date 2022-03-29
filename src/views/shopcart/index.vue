@@ -11,115 +11,60 @@
 				<div class="cart-th6">操作</div>
 			</div>
 			<div class="cart-body">
-				<ul class="cart-list">
+				<ul v-for="goods in goodsList" :key="goods.id" class="cart-list">
 					<li class="cart-list-con1">
-						<input type="checkbox" name="chk_list" />
+						<!-- <input
+							type="checkbox"
+							name="chk_list"
+							:checked="Boolean(goods.isChecked)"
+						/> -->
+						<!-- 
+							!! 取反取反
+						-->
+						<input
+							type="checkbox"
+							name="chk_list"
+							:checked="!!goods.isChecked"
+						/>
 					</li>
 					<li class="cart-list-con2">
-						<img src="./images/goods1.png" />
+						<img :src="goods.imgUrl" />
 						<div class="item-msg">
-							米家（MIJIA） 小米小白智能摄像机增强版
-							1080p高清360度全景拍摄AI增强
+							{{ goods.skuName }}
 						</div>
 					</li>
-					<li class="cart-list-con3">
+					<!-- <li class="cart-list-con3">
 						<div class="item-txt">语音升级款</div>
-					</li>
+					</li> -->
 					<li class="cart-list-con4">
-						<span class="price">399.00</span>
+						<span class="price">{{ goods.skuPrice }}</span>
 					</li>
 					<li class="cart-list-con5">
-						<a href="javascript:void(0)" class="mins">-</a>
-						<input
-							autocomplete="off"
-							type="text"
-							value="1"
-							minnum="1"
-							class="itxt"
+						<!-- 
+							万一将来有100个商品
+							1. 计算属性：不知道该计算哪个商品 
+							2. 监视属性：不知道该监视哪个商品 
+						-->
+						<!-- <InputNumber :min="1" :max="100" v-model:value="goods.skuNum" /> -->
+						<!-- 
+							v-model:value="goods.skuNum"做了两件事
+								value 属性
+								update:value 事件
+						-->
+						<InputNumber
+							:min="1"
+							:max="100"
+							:value="goods.skuNum"
+							@update:value="updateGoodsSkuNum(goods, $event)"
 						/>
-						<a href="javascript:void(0)" class="plus">+</a>
 					</li>
 					<li class="cart-list-con6">
-						<span class="sum">399</span>
+						<span class="sum">{{ goods.skuPrice * goods.skuNum }}</span>
 					</li>
 					<li class="cart-list-con7">
-						<a href="#none" class="sindelet">删除</a>
+						<a class="sindelet">删除</a>
 						<br />
-						<a href="#none">移到收藏</a>
-					</li>
-				</ul>
-
-				<ul class="cart-list">
-					<li class="cart-list-con1">
-						<input type="checkbox" name="chk_list" id="" value="" />
-					</li>
-					<li class="cart-list-con2">
-						<img src="./images/goods2.png" />
-						<div class="item-msg">
-							华为（MIJIA） 华为metaPRO 30 浴霸4摄像 超清晰
-						</div>
-					</li>
-					<li class="cart-list-con3">
-						<div class="item-txt">黑色版本</div>
-					</li>
-					<li class="cart-list-con4">
-						<span class="price">5622.00</span>
-					</li>
-					<li class="cart-list-con5">
-						<a href="javascript:void(0)" class="mins">-</a>
-						<input
-							autocomplete="off"
-							type="text"
-							value="1"
-							minnum="1"
-							class="itxt"
-						/>
-						<a href="javascript:void(0)" class="plus">+</a>
-					</li>
-					<li class="cart-list-con6">
-						<span class="sum">5622</span>
-					</li>
-					<li class="cart-list-con7">
-						<a href="#none" class="sindelet">删除</a>
-						<br />
-						<a href="#none">移到收藏</a>
-					</li>
-				</ul>
-
-				<ul class="cart-list">
-					<li class="cart-list-con1">
-						<input type="checkbox" name="chk_list" id="" value="" />
-					</li>
-					<li class="cart-list-con2">
-						<img src="./images/goods3.png" />
-						<div class="item-msg">
-							iphone 11 max PRO 苹果四摄 超清晰 超费电 超及好用
-						</div>
-					</li>
-					<li class="cart-list-con3">
-						<div class="item-txt">墨绿色</div>
-					</li>
-					<li class="cart-list-con4">
-						<span class="price">11399.00</span>
-					</li>
-					<li class="cart-list-con5">
-						<a href="javascript:void(0)" class="mins">-</a>
-						<input
-							autocomplete="off"
-							type="text"
-							value="1"
-							minnum="1"
-							class="itxt"
-						/>
-						<a href="javascript:void(0)" class="plus">+</a>
-					</li>
-					<li class="cart-list-con6">
-						<span class="sum">11399</span>
-					</li>
-					<li class="cart-list-con7">
-						<a href="#none" class="sindelet">删除</a>
-						<br />
-						<a href="#none">移到收藏</a>
+						<a>移到收藏</a>
 					</li>
 				</ul>
 			</div>
@@ -155,13 +100,31 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { onMounted } from "vue";
-import { reqGetCartList } from "@/api/shopcart";
+import { onMounted, ref } from "vue";
+import { reqGetCartList, reqAddToCart } from "@/api/shopcart";
+import InputNumber from "@/components/InputNumber/index.vue";
+import type { GoodsList, GoodsItem } from "./types";
+
+const goodsList = ref<GoodsList>([]);
 
 onMounted(async () => {
 	const data = await reqGetCartList();
-	console.log(data);
+	/*
+		当没有购物车数据的时候，是空数组
+		有购物车数据的时候 [{ cartInfoList: [] }]
+	*/
+	goodsList.value = data[0] ? data[0].cartInfoList : [];
 });
+
+// 更新商品数量
+const updateGoodsSkuNum = async (goods: GoodsItem, newSkuNum: number) => {
+	// skuId: 更新商品的id
+	// console.log(skuId, newSkuNum);
+	// 发送请求，更新服务器数据
+	await reqAddToCart(goods.skuId, newSkuNum - goods.skuNum);
+	// 更新客户端数据，计算总价才会发生变化
+	goods.skuNum = newSkuNum;
+};
 </script>
 
 <style lang="less" scoped>
@@ -218,6 +181,8 @@ onMounted(async () => {
 				padding: 10px;
 				border-bottom: 1px solid #ddd;
 				overflow: hidden;
+				display: flex;
+				align-items: center;
 
 				& > li {
 					float: left;
@@ -228,7 +193,7 @@ onMounted(async () => {
 				}
 
 				.cart-list-con2 {
-					width: 25%;
+					width: 45%;
 
 					img {
 						width: 82px;
@@ -238,7 +203,7 @@ onMounted(async () => {
 
 					.item-msg {
 						float: left;
-						width: 150px;
+						width: 350px;
 						margin: 0 10px;
 						line-height: 18px;
 					}

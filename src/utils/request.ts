@@ -24,7 +24,7 @@
 import axios from "axios";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import { v4 as uuidv4 } from "uuid";
+import getUserTempId from "./getUserTempId";
 
 // https://www.npmjs.com/package/nprogress
 NProgress.configure({ showSpinner: false });
@@ -68,13 +68,6 @@ const request = axios.create({
     promise就是最终 request({ method: xxx }) 函数调用的返回值
 */
 
-let userTempId = localStorage.getItem("userTempId");
-
-if (!userTempId) {
-	userTempId = uuidv4();
-	localStorage.setItem("userTempId", userTempId);
-}
-
 // 拦截器：请求的生命周期函数
 
 // 请求拦截器函数：发送请求之前触发的函数
@@ -104,7 +97,7 @@ request.interceptors.request.use(
 
 		// 添加未登录前用户临时id
 		// config.headers.userTempId = uuidv4(); // 调用函数会生成一个唯一的id
-		config.headers.userTempId = userTempId;
+		config.headers.userTempId = getUserTempId();
 
 		// 必须返回config，因为下一步就要发送请求，发送请求需要config
 		return config;
