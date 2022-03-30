@@ -3,28 +3,18 @@
 		<h3 class="title">填写并核对订单信息</h3>
 		<div class="content">
 			<h5 class="receive">收件人信息</h5>
-			<div class="address clearFix">
-				<span class="username selected">张三</span>
+			<div
+				v-for="user in tradeInfo.userAddressList"
+				:key="user.id"
+				class="address clearFix"
+			>
+				<span :class="{ username: true, selected: user.isDefault }">
+					{{ user.consignee }}
+				</span>
 				<p>
-					<span class="s1">北京市昌平区宏福科技园综合楼6层</span>
-					<span class="s2">15010658793</span>
-					<span class="s3">默认地址</span>
-				</p>
-			</div>
-			<div class="address clearFix">
-				<span class="username selected">李四</span>
-				<p>
-					<span class="s1">北京市昌平区宏福科技园综合楼6层</span>
-					<span class="s2">13590909098</span>
-					<span class="s3">默认地址</span>
-				</p>
-			</div>
-			<div class="address clearFix">
-				<span class="username selected">王五</span>
-				<p>
-					<span class="s1">北京市昌平区宏福科技园综合楼6层</span>
-					<span class="s2">18012340987</span>
-					<span class="s3">默认地址</span>
+					<span class="s1">{{ user.deliveryAddress }}</span>
+					<span class="s2">{{ user.consigneeTel }}</span>
+					<span v-if="user.isDefault" class="s3">默认地址</span>
 				</p>
 			</div>
 			<div class="line"></div>
@@ -44,38 +34,28 @@
 			</div>
 			<div class="detail">
 				<h5>商品清单</h5>
-				<ul class="list clearFix">
+				<ul
+					v-for="goods in tradeInfo.detailArrayList"
+					:key="goods.id"
+					class="list clearFix"
+				>
 					<li>
-						<img src="./images/goods.png" alt="" />
+						<img
+							:src="goods.imgUrl"
+							:alt="goods.skuName"
+							style="width: 100px; height: 100px"
+						/>
 					</li>
 					<li>
 						<p>
-							Apple iPhone 6s (A1700) 64G 玫瑰金色
-							移动联通电信4G手机硅胶透明防摔软壳 本色系列
+							{{ goods.skuNum }}
 						</p>
 						<h4>7天无理由退货</h4>
 					</li>
 					<li>
-						<h3>￥5399.00</h3>
+						<h3>￥{{ goods.orderPrice }}</h3>
 					</li>
-					<li>X1</li>
-					<li>有货</li>
-				</ul>
-				<ul class="list clearFix">
-					<li>
-						<img src="./images/goods.png" alt="" />
-					</li>
-					<li>
-						<p>
-							Apple iPhone 6s (A1700) 64G 玫瑰金色
-							移动联通电信4G手机硅胶透明防摔软壳 本色系列
-						</p>
-						<h4>7天无理由退货</h4>
-					</li>
-					<li>
-						<h3>￥5399.00</h3>
-					</li>
-					<li>X1</li>
+					<li>X{{ goods.skuNum }}</li>
 					<li>有货</li>
 				</ul>
 			</div>
@@ -96,12 +76,15 @@
 		<div class="money clearFix">
 			<ul>
 				<li>
-					<b><i>1</i>件商品，总商品金额</b>
-					<span>¥5399.00</span>
+					<b
+						><i>{{ tradeInfo.totalNum }}</i
+						>件商品，总商品金额</b
+					>
+					<span>¥{{ tradeInfo.originalTotalAmount }}</span>
 				</li>
 				<li>
 					<b>返现：</b>
-					<span>0.00</span>
+					<span>{{ tradeInfo.activityReduceAmount }}</span>
 				</li>
 				<li>
 					<b>运费：</b>
@@ -110,12 +93,14 @@
 			</ul>
 		</div>
 		<div class="trade">
-			<div class="price">应付金额:　<span>¥5399.00</span></div>
+			<div class="price">
+				应付金额:　<span>¥{{ tradeInfo.totalAmount }}</span>
+			</div>
 			<div class="receiveInfo">
 				寄送至:
-				<span>北京市昌平区宏福科技园综合楼6层</span>
-				收货人：<span>张三</span>
-				<span>15010658793</span>
+				<span>{{ selectedUser.deliveryAddress }}</span>
+				收货人：<span>{{ selectedUser.consignee }}</span>
+				<span>{{ selectedUser.consigneeTel }}</span>
 			</div>
 		</div>
 		<div class="sub clearFix">
@@ -130,7 +115,72 @@ export default {
 };
 </script>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { onMounted, ref, computed } from "vue";
+import { reqGetTrade } from "@/api/pay";
+import type { TradeInfo, UserAddressItem } from "./types";
+/*
+	activityReduceAmount: 0 满减
+	detailArrayList: (2) [{…}, {…}] 商品详情
+	originalTotalAmount: 12385 原来价格
+	totalAmount: 12385 满减后价格
+	totalNum: 2 数量
+	tradeNo: "b06297e263d54f21a5fd4d70cdfdaf10" 订单号
+	userAddressList: null 用户地址（没有数据，需要开发者自己定义）
+*/
+const tradeInfo = ref<TradeInfo>({
+	userAddressList: [], // 因为一上来就要使用数组的方法
+	activityReduceAmount: 0,
+	detailArrayList: [], // 商品详情
+	originalTotalAmount: 0, // 原来价格
+	totalAmount: 0, // 满减后价格
+	totalNum: 0, // 数量
+	tradeNo: "", // 订单号
+});
+
+onMounted(async () => {
+	const data = await reqGetTrade();
+	tradeInfo.value = {
+		...data,
+		userAddressList: [
+			{
+				id: 1,
+				consignee: "静哥", // 收件人姓名
+				consigneeTel: "13814389438", // 收件人电话
+				deliveryAddress: "深圳宝安后瑞洗脚城", // 收件人地址
+				isDefault: 1,
+			},
+			{
+				id: 2,
+				consignee: "陶哥", // 收件人姓名
+				consigneeTel: "13022222222", // 收件人电话
+				deliveryAddress: "深圳宝安后瑞王者峡谷", // 收件人地址
+				isDefault: 0,
+			},
+			{
+				id: 3,
+				consignee: "罗哥", // 收件人姓名
+				consigneeTel: "13033333333", // 收件人电话
+				deliveryAddress: "深圳宝安龙华区大保健", // 收件人地址
+				isDefault: 0,
+			},
+		],
+	};
+});
+
+// Pick<UserAddressItem, "consignee" | "consigneeTel" | "deliveryAddress">
+const selectedUser = computed(() => {
+	// 一开始是空数组，找不到内容，返回值是undefined。undefined读取属性就会报错
+	// 解决：
+	return (
+		tradeInfo.value.userAddressList.find((user) => user.isDefault) || {
+			consignee: "",
+			consigneeTel: "",
+			deliveryAddress: "",
+		}
+	);
+});
+</script>
 
 <style lang="less" scoped>
 .trade-container {

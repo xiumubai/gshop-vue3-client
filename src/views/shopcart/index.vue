@@ -89,7 +89,7 @@
 					<i class="summoney">{{ totalPrice }} </i>
 				</div>
 				<div class="sumbtn">
-					<a class="sum-btn" href="###" target="_blank">结算</a>
+					<a class="sum-btn" @click="goTrade">结算</a>
 				</div>
 			</div>
 		</div>
@@ -105,6 +105,7 @@ export default {
 <script lang="ts" setup>
 import { onMounted, ref, computed } from "vue";
 import debounce from "lodash/debounce";
+import { useRouter } from "vue-router";
 import {
 	reqGetCartList,
 	reqAddToCart,
@@ -113,6 +114,18 @@ import {
 } from "@/api/shopcart";
 import InputNumber from "@/components/InputNumber/index.vue";
 import type { GoodsList, GoodsItem } from "./types";
+
+const router = useRouter();
+
+// 去订单信息页
+const goTrade = () => {
+	if (allCheckedNum.value === 0) {
+		alert("请至少选择一个商品下单");
+		return;
+	}
+
+	router.push("/trade");
+};
 
 const goodsList = ref<GoodsList>([]);
 

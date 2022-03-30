@@ -83,7 +83,8 @@ export default {
 <script lang="ts" setup>
 import { Form, Field } from "vee-validate";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
+// import { useStore } from "vuex";
+import { useTypeStore } from "@/store";
 // import { reqLogin } from "@/api/user";
 import { validatePhone, validatePassword } from "@/utils/regs";
 
@@ -101,7 +102,7 @@ const router = useRouter();
 			}
 		getters
 */
-const store = useStore();
+const store = useTypeStore();
 
 const handleSubmit = async (values: any) => {
 	await store.dispatch("user/login", values);
