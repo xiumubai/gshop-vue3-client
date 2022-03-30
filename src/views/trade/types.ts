@@ -6,7 +6,7 @@ interface DetailArrayItem {
 	orderPrice: number;
 }
 
-type DetailArrayList = DetailArrayItem[];
+export type DetailArrayList = DetailArrayItem[];
 
 export interface UserAddressItem {
 	id: number;

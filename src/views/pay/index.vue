@@ -11,11 +11,13 @@
 				<div class="paymark">
 					<span class="fl"
 						>请您在提交订单<em class="orange time">4小时</em
-						>之内完成支付，超时订单会自动取消。订单号：<em>145687</em></span
+						>之内完成支付，超时订单会自动取消。订单号：<em>{{
+							route.query.orderId
+						}}</em></span
 					>
 					<span class="fr"
 						><em class="lead">应付金额：</em
-						><em class="orange money">￥17,654</em></span
+						><em class="orange money">￥{{ route.query.totalAmount }}</em></span
 					>
 				</div>
 			</div>
@@ -74,7 +76,7 @@
 				<div class="hr"></div>
 
 				<div class="submit">
-					<router-link class="btn" to="/paysuccess">立即支付</router-link>
+					<a class="btn" @click="showPayDialog">立即支付</a>
 				</div>
 				<div class="otherpay">
 					<div class="step-tit">
@@ -88,6 +90,14 @@
 			</div>
 		</div>
 	</div>
+
+	<Dialog title="微信支付" v-model:visible="visible">
+		<img src="xxx" alt="xxx" />
+		<template #footer>
+			<button class="dialog-btn">支付成功</button>
+			<button class="dialog-btn">支付遇到问题</button>
+		</template>
+	</Dialog>
 </template>
 
 <script lang="ts">
@@ -96,7 +106,17 @@ export default {
 };
 </script>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const visible = ref(false);
+
+const showPayDialog = () => {
+	visible.value = true;
+};
+</script>
 
 <style lang="less" scoped>
 .pay-main {
@@ -246,6 +266,20 @@ export default {
 				text-decoration: none;
 			}
 		}
+	}
+}
+
+.dialog-btn {
+	font-size: 14px;
+	padding: 8px 15px;
+	border-radius: 4px;
+	color: #fff;
+	background-color: #409eff;
+	border: none;
+	margin-right: 15px;
+	cursor: pointer;
+	&:hover {
+		background-color: #79bbff;
 	}
 }
 </style>

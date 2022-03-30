@@ -4,6 +4,7 @@ import TypeNav from "./components/TypeNav/index.vue";
 import Carousel from "./components/Carousel/index.vue";
 import Pagination from "./components/Pagination/index.vue";
 import InputNumber from "./components/InputNumber/index.vue";
+import Dialog from "./components/Dialog/index.vue";
 
 import router from "./router";
 import store, { key } from "./store";
@@ -24,5 +25,6 @@ app.component("TypeNav", TypeNav);
 app.component("Carousel", Carousel);
 app.component("Pagination", Pagination);
 app.component("InputNumber", InputNumber);
+app.component("Dialog", Dialog);
 
 app.mount("#app");

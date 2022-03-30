@@ -62,6 +62,7 @@
 			<div class="bbs">
 				<h5>买家留言：</h5>
 				<textarea
+					v-model="orderComment"
 					placeholder="建议留言前先与商家沟通确认"
 					class="remarks-cont"
 				></textarea>
@@ -104,7 +105,7 @@
 			</div>
 		</div>
 		<div class="sub clearFix">
-			<router-link class="subBtn" to="/pay">提交订单</router-link>
+			<a class="subBtn" @click="submitOrder">提交订单</a>
 		</div>
 	</div>
 </template>
@@ -117,7 +118,8 @@ export default {
 
 <script lang="ts" setup>
 import { onMounted, ref, computed } from "vue";
-import { reqGetTrade } from "@/api/pay";
+import { useRouter } from "vue-router";
+import { reqGetTrade, reqSubmitOrder } from "@/api/pay";
 import type { TradeInfo, UserAddressItem } from "./types";
 /*
 	activityReduceAmount: 0 满减
@@ -137,6 +139,8 @@ const tradeInfo = ref<TradeInfo>({
 	totalNum: 0, // 数量
 	tradeNo: "", // 订单号
 });
+
+const orderComment = ref("");
 
 onMounted(async () => {
 	const data = await reqGetTrade();
@@ -180,6 +184,32 @@ const selectedUser = computed(() => {
 		}
 	);
 });
+
+const router = useRouter();
+
+// 提交订单
+const submitOrder = async () => {
+	const { tradeNo, detailArrayList, totalAmount } = tradeInfo.value;
+	const { consignee, consigneeTel, deliveryAddress } = selectedUser.value;
+
+	const orderId = await reqSubmitOrder({
+		tradeNo,
+		consignee,
+		consigneeTel,
+		deliveryAddress,
+		paymentWay: "ONLINE", // 支付方式
+		orderComment: orderComment.value, // 订单备注
+		orderDetailList: detailArrayList, // 商品列表
+	});
+
+	router.push({
+		name: "Pay",
+		query: {
+			orderId,
+			totalAmount,
+		},
+	});
+};
 </script>
 
 <style lang="less" scoped>
