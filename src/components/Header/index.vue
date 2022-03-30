@@ -14,7 +14,7 @@
 			</span>
 
 			<ul class="header-nav">
-				<li>我的订单</li>
+				<li><router-link to="/center">我的订单</router-link></li>
 				<li><router-link to="/shopcart">我的购物车</router-link></li>
 				<li>我的尚品汇</li>
 				<li>尚品汇会员</li>
