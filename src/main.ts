@@ -6,7 +6,7 @@ import Pagination from "./components/Pagination/index.vue";
 import InputNumber from "./components/InputNumber/index.vue";
 
 import router from "./router";
-import store from "./store";
+import store, { key } from "./store";
 
 // 重置样式
 import "./styles/reset.css";
@@ -17,7 +17,7 @@ const app = createApp(App);
 // 安装router
 app.use(router);
 // 安装store
-app.use(store);
+app.use(store, key);
 
 // 注册全局组件
 app.component("TypeNav", TypeNav);

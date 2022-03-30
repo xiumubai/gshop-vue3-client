@@ -47,13 +47,15 @@ export default {
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
+// import { useStore } from "vuex";
+// import { key } from "@/store";
+import { useTypeStore } from "@/store";
 
 const router = useRouter();
 const route = useRoute();
 
-const store = useStore();
+const store = useTypeStore();
 
 // setup这个函数：相当于是beforeCreate created生命周期函数
 // setup函数就是在beforeCreate created生命周期函数时触发的
