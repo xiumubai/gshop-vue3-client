@@ -23,6 +23,7 @@
 
 import axios from "axios";
 import NProgress from "nprogress";
+import store from "@/store";
 import "nprogress/nprogress.css";
 import getUserTempId from "./getUserTempId";
 
@@ -95,6 +96,10 @@ request.interceptors.request.use(
 		// 每次发送请求之前都会触发当前函数。再次在headers中携带了token参数
 		// 所以真正请求时就有token参数了
 
+		const token = store.state.user.token;
+		if (token) {
+			config.headers.token = token;
+		}
 		// 添加未登录前用户临时id
 		// config.headers.userTempId = uuidv4(); // 调用函数会生成一个唯一的id
 		config.headers.userTempId = getUserTempId();

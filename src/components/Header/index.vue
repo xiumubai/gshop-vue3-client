@@ -2,8 +2,15 @@
 	<header class="header">
 		<div class="header-top">
 			<span>
-				尚品汇欢迎您！ 请 <router-link to="/login">登录</router-link> |
-				<router-link to="/register">免费注册</router-link>
+				尚品汇欢迎您！
+				<span v-if="store.state.user.nickName">
+					{{ store.state.user.nickName }}
+					<button>退出登录</button>
+				</span>
+				<span v-else>
+					请 <router-link to="/login">登录</router-link> |
+					<router-link to="/register">免费注册</router-link>
+				</span>
 			</span>
 
 			<ul class="header-nav">
@@ -40,10 +47,13 @@ export default {
 
 <script lang="ts" setup>
 import { ref, watch } from "vue";
+import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
+
+const store = useStore();
 
 // setup这个函数：相当于是beforeCreate created生命周期函数
 // setup函数就是在beforeCreate created生命周期函数时触发的

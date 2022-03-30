@@ -11,11 +11,7 @@
 				<div class="cart-th6">操作</div>
 			</div>
 			<div class="cart-body">
-				<ul
-					v-for="(goods, index) in goodsList"
-					:key="goods.id"
-					class="cart-list"
-				>
+				<ul v-for="goods in goodsList" :key="goods.id" class="cart-list">
 					<li class="cart-list-con1">
 						<!-- <input
 							type="checkbox"
@@ -67,7 +63,7 @@
 						<span class="sum">{{ goods.skuPrice * goods.skuNum }}</span>
 					</li>
 					<li class="cart-list-con7">
-						<a class="sindelet" @click="delGoods(goods.skuId, index)">删除</a>
+						<a class="sindelet" @click="delGoods(goods.skuId)">删除</a>
 						<br />
 						<a>移到收藏</a>
 					</li>
@@ -153,7 +149,10 @@ const updateIsChecked = async (goods: GoodsItem, isChecked: number) => {
 
 const isCheckAll = computed({
 	get() {
-		return goodsList.value.every((goods) => goods.isChecked);
+		return (
+			goodsList.value.every((goods) => goods.isChecked) &&
+			goodsList.value.length > 0
+		);
 	},
 	set(val: boolean) {
 		const isChecked = val ? 1 : 0;
@@ -166,16 +165,18 @@ const isCheckAll = computed({
 });
 
 // 删除
-const delGoods = async (skuId: number, index: number) => {
+const delGoods = async (skuId: number) => {
 	await reqDeleteCart(skuId);
-	goodsList.value.splice(index, 1);
+	// 下标删除，有问题
+	// goodsList.value.splice(index, 1);
+	goodsList.value = goodsList.value.filter((goods) => goods.skuId !== skuId);
 };
 
 // 批量删除
 const patchDelGoods = async () => {
-	goodsList.value.forEach((goods, index) => {
+	goodsList.value.forEach((goods) => {
 		if (goods.isChecked) {
-			delGoods(goods.skuId, index);
+			delGoods(goods.skuId);
 		}
 	});
 };

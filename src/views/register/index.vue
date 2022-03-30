@@ -93,29 +93,37 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
 // https://vee-validate.logaretm.com/v4/tutorials/basics#displaying-error-messages
 import {
 	Field,
 	Form,
 	// ErrorMessage
-	SubmissionHandler,
+	// SubmissionHandler,
 } from "vee-validate";
 import { useRouter } from "vue-router";
 import { reqSendCode, reqRegister } from "@/api/user";
-import type { User, UserForm } from "./types";
+import { phoneReg, validatePhone, validatePassword } from "@/utils/regs";
+import type { UserForm } from "./types";
 
 // 表单数据
 const phone = ref("");
 const time = ref(60);
 const isSendCode = ref(false);
 
+let timer: NodeJS.Timer;
+
+onBeforeUnmount(() => {
+	// 如果我在倒计时60s内完成了注册操作，此时定时器还开启者，清除掉
+	clearInterval(timer);
+});
+
 // 发送验证码
 const sendCode = async () => {
 	// 发送验证码
 	isSendCode.value = true;
 	// 倒计时效果
-	const timer = setInterval(() => {
+	timer = setInterval(() => {
 		// 每隔一秒time--
 		time.value--;
 		if (time.value <= 0) {
@@ -161,22 +169,7 @@ const register = async (values: any) => {
 	router.push("/login");
 };
 
-const phoneReg = /1[3-9][0-9]{9}/;
-// 定义表单校验规则
-const validatePhone = (value: string) => {
-	if (!value) {
-		return "请输入手机号";
-	}
-	// 表单校验失败，返回值就是失败原因
-	if (!phoneReg.test(value)) {
-		return "手机号不符合规范";
-	}
-	// return 'xxxx'
-	// 表单校验通过
-	return true;
-};
-
-const codeReg = /[0-9]{6}/;
+const codeReg = /^[0-9]{6}$/;
 const validateCode = (value: string) => {
 	if (!value) {
 		return "请输入验证码";
@@ -184,19 +177,6 @@ const validateCode = (value: string) => {
 	// 表单校验失败，返回值就是失败原因
 	if (!codeReg.test(value)) {
 		return "验证码不符合规范";
-	}
-	// 表单校验通过
-	return true;
-};
-
-const passwordReg = /[a-zA-Z0-9_]{6,18}/;
-const validatePassword = (value: string) => {
-	if (!value) {
-		return "请输入密码";
-	}
-	// 表单校验失败，返回值就是失败原因
-	if (!passwordReg.test(value)) {
-		return "密码不符合规范";
 	}
 	// 表单校验通过
 	return true;

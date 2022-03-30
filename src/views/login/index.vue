@@ -14,7 +14,7 @@
 					</ul>
 
 					<div class="content">
-						<Form @submit="login" v-slot="{ errors }">
+						<Form @submit="handleSubmit" v-slot="{ errors }">
 							<div class="input-text clearFix">
 								<Field
 									name="phone"
@@ -83,42 +83,29 @@ export default {
 <script lang="ts" setup>
 import { Form, Field } from "vee-validate";
 import { useRouter } from "vue-router";
-import { reqLogin } from "@/api/user";
+import { useStore } from "vuex";
+// import { reqLogin } from "@/api/user";
+import { validatePhone, validatePassword } from "@/utils/regs";
 
 const router = useRouter();
+/*
+	store就是vuex的store对象
+		dispatch 触发action函数
+		commit 触发mutation函数
+		state
+			{
+				user: {
+					nickName
+					token
+				}
+			}
+		getters
+*/
+const store = useStore();
 
-const login = async (values: any) => {
-	const data = await reqLogin(values.phone, values.password);
-	console.log(data); // 用户数据
+const handleSubmit = async (values: any) => {
+	await store.dispatch("user/login", values);
 	router.push("/");
-};
-
-const phoneReg = /1[3-9][0-9]{9}/;
-// 定义表单校验规则
-const validatePhone = (value: string) => {
-	if (!value) {
-		return "请输入手机号";
-	}
-	// 表单校验失败，返回值就是失败原因
-	if (!phoneReg.test(value)) {
-		return "手机号不符合规范";
-	}
-	// return 'xxxx'
-	// 表单校验通过
-	return true;
-};
-
-const passwordReg = /[a-zA-Z0-9_]{6,18}/;
-const validatePassword = (value: string) => {
-	if (!value) {
-		return "请输入密码";
-	}
-	// 表单校验失败，返回值就是失败原因
-	if (!passwordReg.test(value)) {
-		return "密码不符合规范";
-	}
-	// 表单校验通过
-	return true;
 };
 </script>
 
