@@ -33,3 +33,19 @@ export const reqSubmitOrder = ({
 		data,
 	});
 };
+
+// 获取支付二维码
+export const reqGetQRCode = (orderId: number): any => {
+	return request({
+		method: "GET",
+		url: `/payment/weixin/createNative/${orderId}`,
+	});
+};
+
+// 查询订单支付状态
+export const reqQueryPayStatus = (orderId: number): any => {
+	return request({
+		method: "GET",
+		url: `/payment/weixin/queryPayStatus/${orderId}`,
+	});
+};

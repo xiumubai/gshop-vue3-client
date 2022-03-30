@@ -92,9 +92,9 @@
 	</div>
 
 	<Dialog title="微信支付" v-model:visible="visible">
-		<img src="xxx" alt="xxx" />
+		<img :src="codeUrl" alt="支付二维码" />
 		<template #footer>
-			<button class="dialog-btn">支付成功</button>
+			<button class="dialog-btn" @click="goPaySuccess">支付成功</button>
 			<button class="dialog-btn">支付遇到问题</button>
 		</template>
 	</Dialog>
@@ -107,14 +107,44 @@ export default {
 </script>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { ref, onBeforeUnmount } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import QRCode from "qrcode";
+import { reqGetQRCode, reqQueryPayStatus } from "@/api/pay";
 
 const route = useRoute();
-const visible = ref(false);
+const router = useRouter();
 
-const showPayDialog = () => {
+const visible = ref(false);
+const codeUrl = ref("");
+let timer: NodeJS.Timer;
+
+const showPayDialog = async () => {
 	visible.value = true;
+	const orderId = +(route.query.orderId as string);
+	// 发送请求，得到支付地址
+	const data = await reqGetQRCode(orderId);
+	// 将支付地址转换成二维码图片
+	const url = await QRCode.toDataURL(data.codeUrl);
+
+	codeUrl.value = url;
+
+	// ajax轮询
+	// 客户端不知道用户啥时候进行支付，是否支付成功
+	// 只有服务器才知道是否支付成功
+	// 所以：客户端只能不断询问服务器看是否支付成功
+	timer = setInterval(async () => {
+		await reqQueryPayStatus(orderId);
+		goPaySuccess();
+	}, 10000);
+};
+
+onBeforeUnmount(() => {
+	clearInterval(timer);
+});
+
+const goPaySuccess = () => {
+	router.push("/paysuccess");
 };
 </script>
 
