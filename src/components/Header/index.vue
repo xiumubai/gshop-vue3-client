@@ -5,7 +5,7 @@
 				尚品汇欢迎您！
 				<span v-if="store.state.user.nickName">
 					{{ store.state.user.nickName }}
-					<button>退出登录</button>
+					<button @click="store.dispatch('user/logout')">退出登录</button>
 				</span>
 				<span v-else>
 					请 <router-link to="/login">登录</router-link> |

@@ -29,3 +29,12 @@ export const reqLogin = (phone: string, password: string): any => {
 		},
 	});
 };
+
+// 退出登录
+// 需要携带token参数
+export const reqLogout = (): any => {
+	return request({
+		method: "GET",
+		url: `/user/passport/logout`,
+	});
+};

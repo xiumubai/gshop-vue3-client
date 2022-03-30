@@ -1,5 +1,5 @@
 import type { Module } from "vuex";
-import { reqLogin } from "@/api/user";
+import { reqLogin, reqLogout } from "@/api/user";
 import type { AllState, User } from "../types";
 import type { UserParams } from "@/views/register/types";
 
@@ -14,6 +14,10 @@ const user: Module<User, AllState> = {
 			const user = await reqLogin(phone, password);
 			commit("LOGIN", user);
 		},
+		async logout({ commit }) {
+			await reqLogout();
+			commit("LOGOUT");
+		},
 	},
 	mutations: {
 		LOGIN(state, user: User) {
@@ -22,6 +26,12 @@ const user: Module<User, AllState> = {
 			// 存储在vuex中
 			state.nickName = user.nickName;
 			state.token = user.token;
+		},
+		LOGOUT(state) {
+			localStorage.removeItem("user");
+			// 清空vuex数据
+			state.nickName = "";
+			state.token = "";
 		},
 	},
 };
