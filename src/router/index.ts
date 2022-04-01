@@ -60,6 +60,17 @@ const router = createRouter({
 			component: () => import("../views/center/index.vue"),
 		},
 		{
+			path: "/test",
+			name: "Test",
+			component: () => import("../views/test/index.vue"),
+			// meta: {
+			// 	isShowFooter: false,
+			// },
+			meta: {
+				isHideFooter: true,
+			},
+		},
+		{
 			path: "/login",
 			name: "Login",
 			component: () => import("../views/login/index.vue"),
