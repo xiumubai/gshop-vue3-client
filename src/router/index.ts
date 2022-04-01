@@ -101,6 +101,14 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/test1",
+			name: "Test1",
+			component: () => import("../views/test/index.vue"),
+			meta: {
+				isHideFooter: true,
+			},
+		},
+		{
 			path: "/test2",
 			name: "test2",
 			component: () => import("../views/404/index.vue"),
