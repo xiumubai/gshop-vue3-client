@@ -101,6 +101,14 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/test2",
+			name: "test2",
+			component: () => import("../views/404/index.vue"),
+			meta: {
+				isHideFooter: true,
+			},
+		},
+		{
 			// vue-router@4版本移除*通配符，需要使用下面这个规则来匹配任意路径
 			path: "/:pathMatch(.*)*",
 			redirect: "/",
