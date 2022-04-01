@@ -70,151 +70,122 @@
 							</table>
 						</div>
 						<div class="orders">
-							<table class="order-item">
+							<!-- 
+								{
+									id: 2907,
+									consignee: "静哥",
+									consigneeTel: "13814389438",
+									totalAmount: 999,
+									paymentWay: "ONLINE",
+									deliveryAddress: "深圳宝安后瑞洗脚城",
+									orderComment: "",
+									outTradeNo: "ATGUIGU1648774260685270",
+									tradeBody:
+										"Redmi 10X 4G Helio G85游戏芯 4800万超清四摄 5020mAh大电量 小孔全面屏 128GB大存储 4GB+128GB 冰雾白 游戏智能手机 小米 红米 ",
+									createTime: "2022-04-01 08:51:01",
+									expireTime: "2022-04-02 08:51:01",
+									orderDetailList: [
+										{
+											id: 5437,
+											orderId: 2907,
+											skuId: 4,
+											skuName:
+												"Redmi 10X 4G Helio G85游戏芯 4800万超清四摄 5020mAh大电量 小孔全面屏 128GB大存储 4GB+128GB 冰雾白 游戏智能手机 小米 红米",
+											imgUrl:
+												"http://47.93.148.192:8080/group1/M00/00/01/rBHu8l-rgJqAHPnoAAF9hoDNfsc505.jpg",
+											orderPrice: 999,
+											skuNum: 1,
+											createTime: "2022-04-01 08:51:01",
+											sourceId: 4,
+											splitTotalAmount: 999,
+										},
+									],
+									orderStatusName: "待发货",
+								};
+							-->
+							<table
+								v-for="order in orderList"
+								:key="order.id"
+								class="order-item"
+							>
 								<thead>
 									<tr>
 										<th colspan="5">
-											<span class="ordertitle"
-												>2017-02-11 11:59　订单编号：7867473872181848
-												<span class="pull-right delete"
-													><img src="./images/delete.png" /></span
-											></span>
+											<span class="ordertitle">
+												{{ order.createTime }} {{ order.outTradeNo }}
+												<span class="pull-right delete">
+													<img src="./images/delete.png" />
+												</span>
+											</span>
 										</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
+									<tr
+										v-for="(goods, index) in order.orderDetailList"
+										:key="goods.id"
+									>
 										<td width="60%">
 											<div class="typographic">
-												<img src="./images/goods.png" />
-												<a href="#" class="block-text"
-													>包邮 正品玛姬儿压缩面膜无纺布纸膜100粒
-													送泡瓶面膜刷喷瓶 新款</a
-												>
-												<span>x1</span>
-												<a href="#" class="service">售后申请</a>
+												<img
+													:src="goods.imgUrl"
+													style="width: 100px; height: 100px"
+												/>
+												<a class="block-text">{{ goods.skuName }}</a>
+												<span>x{{ goods.skuNum }}</span>
+												<a class="service">售后申请</a>
 											</div>
 										</td>
-										<td rowspan="2" width="8%" class="center">小丽</td>
-										<td rowspan="2" width="13%" class="center">
-											<ul class="unstyled">
-												<li>总金额¥138.00</li>
-												<li>在线支付</li>
-											</ul>
-										</td>
-										<td rowspan="2" width="8%" class="center">
-											<a href="#" class="btn">已完成 </a>
-										</td>
-										<td rowspan="2" width="13%" class="center">
-											<ul class="unstyled">
-												<li>
-													<a href="mycomment.html" target="_blank">评价|晒单</a>
-												</li>
-											</ul>
-										</td>
-									</tr>
-									<tr>
-										<td width="50%">
-											<div class="typographic">
-												<img src="./images/goods.png" />
-												<a href="#" class="block-text"
-													>包邮 正品玛姬儿压缩面膜无纺布纸膜100粒
-													送泡瓶面膜刷喷瓶 新款</a
-												>
-												<span>x1</span>
-												<a href="#" class="service">售后申请</a>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-
-							<table class="order-item">
-								<thead>
-									<tr>
-										<th colspan="5">
-											<span class="ordertitle"
-												>2017-02-11 11:59　订单编号：7867473872181848
-												<span class="pull-right delete"
-													><img src="./images/delete.png" /></span
-											></span>
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td width="60%">
-											<div class="typographic">
-												<img src="./images/goods.png" />
-												<a href="#" class="block-text"
-													>包邮 正品玛姬儿压缩面膜无纺布纸膜100粒
-													送泡瓶面膜刷喷瓶 新款</a
-												>
-												<span>x1</span>
-												<a href="#" class="service">售后申请</a>
-											</div>
-										</td>
-										<td rowspan="2" width="8%" class="center">小丽</td>
-										<td rowspan="2" width="13%" class="center">
-											<ul class="unstyled">
-												<li>总金额¥138.00</li>
-												<li>在线支付</li>
-											</ul>
-										</td>
-										<td rowspan="2" width="8%" class="center">
-											<a href="#" class="btn">已完成 </a>
-										</td>
-										<td rowspan="2" width="13%" class="center">
-											<ul class="unstyled">
-												<li>
-													<a href="mycomment.html" target="_blank">评价|晒单</a>
-												</li>
-											</ul>
-										</td>
-									</tr>
-									<tr>
-										<td width="50%">
-											<div class="typographic">
-												<img src="./images/goods.png" />
-												<a href="#" class="block-text"
-													>包邮 正品玛姬儿压缩面膜无纺布纸膜100粒
-													送泡瓶面膜刷喷瓶 新款</a
-												>
-												<span>x1</span>
-												<a href="#" class="service">售后申请</a>
-											</div>
-										</td>
+										<!-- template标签不会生成额外的DOM元素，相当于react的Fragment组件 -->
+										<template v-if="index === 0">
+											<td
+												:rowspan="order.orderDetailList.length"
+												width="8%"
+												class="center"
+											>
+												{{ order.consignee }}
+											</td>
+											<td
+												:rowspan="order.orderDetailList.length"
+												width="13%"
+												class="center"
+											>
+												<ul class="unstyled">
+													<li>总金额¥ {{ order.totalAmount }}</li>
+													<li>在线支付</li>
+												</ul>
+											</td>
+											<td
+												:rowspan="order.orderDetailList.length"
+												width="8%"
+												class="center"
+											>
+												<a class="btn">{{ order.orderStatusName }} </a>
+											</td>
+											<td
+												:rowspan="order.orderDetailList.length"
+												width="13%"
+												class="center"
+											>
+												<ul class="unstyled">
+													<li>
+														<a>评价|晒单</a>
+													</li>
+												</ul>
+											</td>
+										</template>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 						<div class="choose-order">
-							<div class="pagination">
-								<ul>
-									<li class="prev disabled">
-										<a href="javascript:">«上一页</a>
-									</li>
-									<li class="page actived">
-										<a href="javascript:">1</a>
-									</li>
-									<li class="page">
-										<a href="javascript:">2</a>
-									</li>
-									<li class="page">
-										<a href="javascript:">3</a>
-									</li>
-									<li class="page">
-										<a href="javascript:">4</a>
-									</li>
-
-									<li class="next disabled">
-										<a href="javascript:">下一页»</a>
-									</li>
-								</ul>
-								<div>
-									<span>&nbsp;&nbsp;&nbsp;&nbsp;共2页&nbsp;</span>
-								</div>
-							</div>
+							<Pagination
+								v-model:current-page="currentPage"
+								v-model:page-size="pageSize"
+								:total="total"
+								@size-change="getOrderList"
+								@current-change="getOrderList"
+							/>
 						</div>
 					</div>
 					<!--猜你喜欢-->
@@ -285,7 +256,27 @@ export default {
 };
 </script>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+import { reqGetOrderList } from "@/api/center";
+import type { OrderList } from "./types";
+import Pagination from "@/components/Pagination/index.vue";
+
+const orderList = ref<OrderList>([]);
+const currentPage = ref(1);
+const pageSize = ref(5);
+const total = ref(0);
+
+const getOrderList = async () => {
+	const res = await reqGetOrderList(currentPage.value, pageSize.value);
+	orderList.value = res.records;
+	total.value = res.total;
+};
+
+onMounted(() => {
+	getOrderList();
+});
+</script>
 
 <style lang="less" scoped>
 .order-main {
@@ -458,49 +449,6 @@ export default {
 
 					// 分页
 					.choose-order {
-						.pagination {
-							margin: 38px 0;
-
-							ul {
-								font-size: 0;
-								display: inline-block;
-
-								li {
-									display: inline-block;
-									padding: 4px 9px;
-									font-size: 14px;
-									border: 1px solid #e0e9ee;
-
-									&.prev,
-									&.next {
-										background-color: #fafafa;
-									}
-
-									&.prev {
-										border-right-color: #28a3ef;
-									}
-
-									&.page {
-										border-color: #28a3ef;
-										border-left: 0;
-
-										&.actived {
-											background-color: #28a3ef;
-
-											a {
-												color: #fff;
-											}
-										}
-									}
-								}
-							}
-
-							div {
-								display: inline-block;
-								font-size: 14px;
-								color: #333;
-							}
-						}
 					}
 				}
 
