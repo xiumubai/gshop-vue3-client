@@ -30,7 +30,8 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
 			proxy: {
 				"/api": {
 					// 目标服务器地址
-					target: "http://39.98.123.211",
+					// target: "http://39.98.123.211",
+					target: "http://sph-h5-api.atguigu.cn",
 					// 允许跨域
 					changeOrigin: true,
 					// 路径重写：
