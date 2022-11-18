@@ -528,9 +528,9 @@ const setOrder = (orderName: string) => {
 								strong {
 									font-weight: 700;
 
-									i {
-										margin-left: -5px;
-									}
+									// i {
+									// 	margin-left: -5px;
+									// }
 								}
 							}
 
