@@ -2,27 +2,9 @@
 	<div class="trade-container">
 		<h3 class="title">填写并核对订单信息</h3>
 		<div class="content">
-			<h5 class="receive">收件人信息</h5>
-			<div
-				v-for="user in tradeInfo.userAddressList"
-				:key="user.id"
-				class="address clearFix"
-			>
-				<span :class="{ username: true, selected: user.isDefault }">
-					{{ user.consignee }}
-				</span>
-				<p>
-					<span class="s1">{{ user.deliveryAddress }}</span>
-					<span class="s2">{{ user.consigneeTel }}</span>
-					<span v-if="user.isDefault" class="s3">默认地址</span>
-				</p>
-			</div>
+			<Address />	
 			<div class="line"></div>
-			<h5 class="pay">支付方式</h5>
-			<div class="address clearFix">
-				<span class="username selected">在线支付</span>
-				<span class="username" style="margin-left: 5px">货到付款</span>
-			</div>
+			<Pay />
 			<div class="line"></div>
 			<h5 class="pay">送货清单</h5>
 			<div class="way">
@@ -121,6 +103,8 @@ import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { reqGetTrade, reqSubmitOrder } from "@/api/pay";
 import type { TradeInfo, UserAddressItem } from "./types";
+import Address from './address/index.vue'
+import Pay from './pay/index.vue'
 /*
 	activityReduceAmount: 0 满减
 	detailArrayList: (2) [{…}, {…}] 商品详情
@@ -228,84 +212,14 @@ const submitOrder = async () => {
 		padding: 25px;
 		box-sizing: border-box;
 
-		.receive,
-		.pay {
-			line-height: 36px;
-			margin: 18px 0;
-		}
-
-		.address {
-			padding-left: 20px;
-			margin-bottom: 15px;
-
-			.username {
-				float: left;
-				width: 100px;
-				height: 30px;
-				line-height: 30px;
-				text-align: center;
-				border: 1px solid #ddd;
-				position: relative;
-			}
-
-			.username::after {
-				content: "";
-				display: none;
-				width: 13px;
-				height: 13px;
-				position: absolute;
-				right: 0;
-				bottom: 0;
-				background: url(./images/choosed.png) no-repeat;
-			}
-
-			.username.selected {
-				border-color: #e1251b;
-			}
-
-			.username.selected::after {
-				display: block;
-			}
-
-			p {
-				width: 610px;
-				float: left;
-				line-height: 30px;
-				margin-left: 10px;
-				padding-left: 5px;
-				cursor: pointer;
-
-				.s1 {
-					float: left;
-				}
-
-				.s2 {
-					float: left;
-					margin: 0 5px;
-				}
-
-				.s3 {
-					float: left;
-					width: 56px;
-					height: 24px;
-					line-height: 24px;
-					margin-left: 10px;
-					background-color: #878787;
-					color: #fff;
-					margin-top: 3px;
-					text-align: center;
-				}
-			}
-
-			p:hover {
-				background-color: #ddd;
-			}
-		}
-
 		.line {
 			height: 1px;
 			background-color: #ddd;
 		}
+
+		h5 {
+				line-height: 50px;
+			}
 
 		.way {
 			width: 1080px;
@@ -314,9 +228,7 @@ const submitOrder = async () => {
 			padding: 15px;
 			margin: 0 auto;
 
-			h5 {
-				line-height: 50px;
-			}
+			
 
 			.info {
 				margin-top: 20px;
@@ -455,6 +367,7 @@ const submitOrder = async () => {
 			text-align: center;
 			color: #fff;
 			background-color: #e1251b;
+			cursor: pointer;
 		}
 	}
 }
