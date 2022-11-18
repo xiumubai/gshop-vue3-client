@@ -45,8 +45,14 @@
 				</div>
 				<div class="step-cont">
 					<ul class="payType">
-						<li><img src="./images/pay2.jpg" /></li>
-						<li><img src="./images/pay3.jpg" /></li>
+						<li 
+							:class="['item', {checked: item.checked}]"
+							v-for="item in payTypeList"
+							:key="item.id"
+							@click="handleChangeType(item.id)"
+						>
+							<img :src="item.url" />
+						</li>
 					</ul>
 				</div>
 				<div class="hr"></div>
@@ -57,19 +63,14 @@
 					</div>
 					<div class="step-cont">
 						<ul class="payType">
-							<li><img src="./images/pay10.jpg" /></li>
-							<li><img src="./images/pay11.jpg" /></li>
-							<li><img src="./images/pay12.jpg" /></li>
-							<li><img src="./images/pay13.jpg" /></li>
-							<li><img src="./images/pay14.jpg" /></li>
-							<li><img src="./images/pay15.jpg" /></li>
-							<li><img src="./images/pay16.jpg" /></li>
-							<li><img src="./images/pay17.jpg" /></li>
-							<li><img src="./images/pay18.jpg" /></li>
-							<li><img src="./images/pay19.jpg" /></li>
-							<li><img src="./images/pay20.jpg" /></li>
-							<li><img src="./images/pay21.jpg" /></li>
-							<li><img src="./images/pay22.jpg" /></li>
+							<li 
+								:class="['item', {checked: item.checked}]"
+								v-for="item in payTypeList2" 
+								:key="item.id" 
+								@click="handleChangeType(item.id)"
+							>
+									<img :src="item.url" />
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -111,9 +112,12 @@ import { ref, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import QRCode from "qrcode";
 import { reqGetQRCode, reqQueryPayStatus } from "@/api/pay";
-
+import { PAYTYPELIST, PAYTYPELIST2 } from './constant';
 const route = useRoute();
 const router = useRouter();
+
+const payTypeList = ref(PAYTYPELIST)
+const payTypeList2 = ref(PAYTYPELIST2)
 
 const visible = ref(false);
 const codeUrl = ref("");
@@ -146,6 +150,23 @@ onBeforeUnmount(() => {
 const goPaySuccess = () => {
 	router.push("/paysuccess");
 };
+
+const handleChangeType = (id: number) => {
+	payTypeList.value.map(item => {
+		item.checked = false
+		if (item.id === id) {
+			item.checked = true
+		}
+	})
+
+	payTypeList2.value.map(item => {
+		item.checked = false
+		if (item.id === id) {
+			item.checked = true
+		}
+	})
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -267,10 +288,30 @@ const goPaySuccess = () => {
 					li {
 						margin: 2px;
 						display: inline-block;
-						padding: 5px 20px;
+						// padding: 5px 20px;
+						padding: 4px;
 						border: 1px solid #ddd;
 						cursor: pointer;
-						line-height: 18px;
+						position: relative;
+						// line-height: 18px;
+					}
+					li:hover {
+						border-color: #e1251b;
+					}
+
+					li.checked {
+						border-color: #e1251b;
+					}
+					li.checked::after {
+						content: '';
+						display: block;
+						position: absolute;
+						right: -2px;
+						bottom: -2px;
+						width: 14px;
+						height: 14px;
+						overflow: hidden;
+						background: url(https://misc.360buyimg.com/user/purchase/2.0.0/css/i/selected-icon.png) no-repeat;
 					}
 				}
 			}
