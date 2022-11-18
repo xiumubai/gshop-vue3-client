@@ -65,7 +65,7 @@
 				<span>营销中心</span>
 				<span>友情链接</span>
 			</p>
-			<p class="footer-address">地址: 北京市昌平区宏福科技园综合楼6层</p>
+			<p class="footer-address">地址: 北京市昌平区宏福科技园2号楼3层</p>
 			<p>京ICP备19006430号</p>
 		</div>
 	</footer>

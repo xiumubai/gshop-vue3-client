@@ -26,6 +26,35 @@
         </div>
       </div>
     </div>
+    <n-modal
+      v-model:show="showModal"
+      style="width: 700px"
+      preset="card"
+      title="收货地址"
+      positive-text="确认"
+      negative-text="取消"
+      @positive-click="submitCallback"
+      @negative-click="cancelCallback"
+    >
+      <n-form 
+        label-placement="left"
+        label-width="auto"
+        :rules="rules"
+      >
+        <n-form-item label="收货人" path="consignee">
+          <n-input placeholder="请输入用户名" v-model:value="modal.consignee"></n-input>
+        </n-form-item>
+        <n-form-item label="联系电话" path="phoneNum">
+          <n-input placeholder="请输入联系电话" v-model:value="modal.phoneNum"></n-input>
+        </n-form-item>
+        <n-form-item label="所在地区" path="region">
+          <n-input placeholder="" v-model:value="modal.region"></n-input>
+        </n-form-item>
+        <n-form-item label="详细地址" path="userAddress">
+          <n-input placeholder="请输入详细地址" v-model:value="modal.userAddress"></n-input>
+        </n-form-item>
+      </n-form>
+    </n-modal>
   </div>
 </template>
 <script lang="ts">
@@ -35,8 +64,10 @@ export default {
 </script>
 
 <script setup lang='ts'>
-import { ref } from 'vue'
-
+import { ref, onMounted } from 'vue'
+import { findUserAddressList, findBaseRegion } from "@/api/address";
+import { NModal, NForm, NFormItem,NInput, FormItemRule } from 'naive-ui'
+// const message = useMessage()
 const userAddressList = ref([
   {
     id: 1,
@@ -64,6 +95,50 @@ const userAddressList = ref([
   },
 ])
 
+const showModal = ref(false)
+
+const modal = ref({
+  consignee: null,
+  phoneNum: null,
+  userAddress: null,
+  region: null
+})
+
+const rules = {
+  consignee: {
+    required: true,
+    trigger: ['blur', 'input'],
+    message: '请输入收货人'
+  },
+  phoneNum: {
+    required: true,
+    trigger: ['blur', 'input'],
+    validator (rule: FormItemRule, value: number) {
+      const phoneReg = /^1[3-9][0-9]{9}$/;
+      if (!value) {
+        return false;
+      }
+      // 表单校验失败，返回值就是失败原因
+      if (!phoneReg.test(value + '')) {
+        return false;
+      }
+      return true;
+    },
+    message: '请输入电话号码'
+  },
+  region: {
+    required: true,
+    trigger: ['blur', 'input'],
+    message: '请输入所在地区'
+  },
+  userAddress: {
+    required: true,
+    trigger: ['blur', 'input'],
+    message: '请输入详细地址'
+  },
+}
+
+// 切换收货地址
 const handleChangeAdd = (id: number) => {
   userAddressList.value.map(n => {
     n.selected = false
@@ -73,9 +148,18 @@ const handleChangeAdd = (id: number) => {
   })
 }
 
+// 关闭modal
+const cancelCallback = () => {
+  // message.success("Cancel");
+}
+
+const submitCallback = () => {
+
+}
+
 // 添加收货地址
 const handleAdd = () => {
-
+  showModal.value = true
 }
 
 // 设为默认地址
@@ -90,7 +174,19 @@ const handleSetDefault = (item: any) => {
   }) 
 }
 
+const getAddList = async () => {
+  const res = await findUserAddressList()
+  console.log(res);
+}
 
+const getReginList = async () => {
+  const res = await findBaseRegion()
+}
+
+onMounted(() => {
+  getAddList()
+  getReginList()
+})
 </script>
 
 <style lang="less" scoped>
@@ -107,6 +203,9 @@ const handleSetDefault = (item: any) => {
     .add {
       color: #005ea7;
       cursor: pointer;
+    }
+    .add:hover {
+      color: red;
     }
   }
   .address {
