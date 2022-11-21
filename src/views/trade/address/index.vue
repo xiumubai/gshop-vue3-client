@@ -60,10 +60,11 @@
         <n-form-item label="详细地址" path="userAddress">
           <n-input placeholder="请输入详细地址" v-model:value="modal.userAddress"></n-input>
         </n-form-item>
-        <n-form-item>
+        <n-form-item style="display: flex; justify-content: flex-end;">
           <n-button @click="cancelCallback">
             取消
           </n-button>
+          <div style="margin-right: 10px"></div>
           <n-button @click="submitCallback" type="primary">
             确认
           </n-button>
