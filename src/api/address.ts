@@ -17,7 +17,7 @@ export const findBaseRegion = (): any => {
 };
 
 // 根据地址大区获取省份
-export const findBaseProvinceByRegionId = (regionId:number): any => {
+export const findBaseProvinceByRegionId = (regionId:number | string): any => {
 	return request({
 		method: "GET",
 		url: `/user/userAddress/auth/findBaseProvinceByRegionId/${regionId}`,
@@ -29,7 +29,7 @@ export const saveAddress = (userAddressInfo: any): any => {
 	return request({
 		method: "POST",
 		url: `/user/userAddress/auth/save`,
-    params: {
+    data: {
       ...userAddressInfo
     }
 	});
@@ -48,7 +48,7 @@ export const updateAddress = (userAddressInfo: any): any => {
 	return request({
 		method: "POST",
 		url: `/user/userAddress/auth/update`,
-    params: {
+    data: {
       ...userAddressInfo
     }
 	});

@@ -5,24 +5,24 @@
       <span class="add" @click="handleAdd">新增收货地址</span>
     </div>
     <div
-      v-for="user in userAddressList"
-      :key="user.id"
+      v-for="item in userAddressList"
+      :key="item.id"
       class="address clearFix"
     >
-      <span @click="handleChangeAdd(user.id)" :class="{ username: true, selected: user.selected }">
-        {{ user.consignee }}
+      <span @click="handleChangeAdd(item.id)" :class="{ username: true, selected: item.selected }">
+        {{ item.consignee }}
       </span>
       <div class="add-item">
         <div>
-          <span class="s1">{{ user.deliveryAddress }}</span>
-          <span class="s2">{{ user.consigneeTel }}</span>
-          <span v-if="user.isDefault" class="s3">默认地址</span>
+          <span class="s1">{{ item.fullAddress }}</span>
+          <span class="s2">{{ item.phoneNum }}</span>
+          <span v-if="item.isDefault" class="s3">默认地址</span>
         </div>
 
         <div class="options">
-          <span @click="handleSetDefault(user)" v-if="!user.isDefault">设为默认地址</span>
-          <span>编辑</span>
-          <span>删除</span>
+          <span @click="handleSetDefault(item)" v-if="!item.isDefault">设为默认地址</span>
+          <span @click="handleUpdateAdd(item)">编辑</span>
+          <span @click="handleDeleteAdd(item)">删除</span>
         </div>
       </div>
     </div>
@@ -33,13 +33,11 @@
       title="收货地址"
       positive-text="确认"
       negative-text="取消"
-      @positive-click="submitCallback"
-      @negative-click="cancelCallback"
+      ref="formRef"
     >
       <n-form 
         label-placement="left"
         label-width="auto"
-        :rules="rules"
       >
         <n-form-item label="收货人" path="consignee">
           <n-input placeholder="请输入用户名" v-model:value="modal.consignee"></n-input>
@@ -47,11 +45,28 @@
         <n-form-item label="联系电话" path="phoneNum">
           <n-input placeholder="请输入联系电话" v-model:value="modal.phoneNum"></n-input>
         </n-form-item>
-        <n-form-item label="所在地区" path="region">
-          <n-input placeholder="" v-model:value="modal.region"></n-input>
+        <n-form-item label="所在地区" path="provinceId">
+          <n-cascader
+            v-model:value="modal.provinceId"
+            :options="regionOptions"
+            :multiple="false"
+            placeholder="所在地区"
+            remote
+            clearable
+            check-strategy="child"
+            :on-load="handleLoad"
+          />
         </n-form-item>
         <n-form-item label="详细地址" path="userAddress">
           <n-input placeholder="请输入详细地址" v-model:value="modal.userAddress"></n-input>
+        </n-form-item>
+        <n-form-item>
+          <n-button @click="cancelCallback">
+            取消
+          </n-button>
+          <n-button @click="submitCallback" type="primary">
+            确认
+          </n-button>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -65,79 +80,46 @@ export default {
 
 <script setup lang='ts'>
 import { ref, onMounted } from 'vue'
-import { findUserAddressList, findBaseRegion } from "@/api/address";
-import { NModal, NForm, NFormItem,NInput, FormItemRule } from 'naive-ui'
-// const message = useMessage()
-const userAddressList = ref([
-  {
-    id: 1,
-    selected: true,
-    consignee: "静哥", // 收件人姓名
-    consigneeTel: "13814389438", // 收件人电话
-    deliveryAddress: "深圳宝安后瑞洗脚城", // 收件人地址
-    isDefault: 1,
-  },
-  {
-    id: 2,
-    selected: false,
-    consignee: "陶哥", // 收件人姓名
-    consigneeTel: "13022222222", // 收件人电话
-    deliveryAddress: "深圳宝安后瑞王者峡谷", // 收件人地址
-    isDefault: 0,
-  },
-  {
-    id: 3,
-    selected: false,
-    consignee: "罗哥", // 收件人姓名
-    consigneeTel: "13033333333", // 收件人电话
-    deliveryAddress: "深圳宝安龙华区大保健", // 收件人地址
-    isDefault: 0,
-  },
-])
+import { 
+  findUserAddressList, 
+  findBaseRegion, 
+  findBaseProvinceByRegionId,
+  saveAddress,
+  delAddress,
+  updateAddress
+} from "@/api/address";
+import { 
+  NModal,
+  NForm,
+  NFormItem,
+  NInput,
+  FormItemRule,
+  NCascader, 
+  CascaderOption, 
+  NButton,
+} from 'naive-ui'
+import { time } from 'console';
 
+type IAddItem = {
+  id: number;
+  consignee: string;
+  fullAddress: string;
+  phoneNum: number;
+  isDefault: number;
+  selected?: boolean;
+}
+const userAddressList = ref<IAddItem[]>([])
+const regionOptions = ref([])
 const showModal = ref(false)
 
 const modal = ref({
   consignee: null,
   phoneNum: null,
   userAddress: null,
-  region: null
+  provinceId: null
 })
-
-const rules = {
-  consignee: {
-    required: true,
-    trigger: ['blur', 'input'],
-    message: '请输入收货人'
-  },
-  phoneNum: {
-    required: true,
-    trigger: ['blur', 'input'],
-    validator (rule: FormItemRule, value: number) {
-      const phoneReg = /^1[3-9][0-9]{9}$/;
-      if (!value) {
-        return false;
-      }
-      // 表单校验失败，返回值就是失败原因
-      if (!phoneReg.test(value + '')) {
-        return false;
-      }
-      return true;
-    },
-    message: '请输入电话号码'
-  },
-  region: {
-    required: true,
-    trigger: ['blur', 'input'],
-    message: '请输入所在地区'
-  },
-  userAddress: {
-    required: true,
-    trigger: ['blur', 'input'],
-    message: '请输入详细地址'
-  },
-}
-
+const regionId = ref<number | null>(null)
+const editType = ref('add')
 // 切换收货地址
 const handleChangeAdd = (id: number) => {
   userAddressList.value.map(n => {
@@ -148,44 +130,99 @@ const handleChangeAdd = (id: number) => {
   })
 }
 
-// 关闭modal
-const cancelCallback = () => {
-  // message.success("Cancel");
+const handleDeleteAdd = async (item: any) => {
+  await delAddress(item.id)
+  showModal.value = false;
+  getAddList();
 }
 
-const submitCallback = () => {
-
+// 更新地址
+const handleUpdateAdd = (item: any) => {
+  showModal.value = true;
+  editType.value = 'update';
+  modal.value = {
+    ...item
+  }
 }
 
 // 添加收货地址
 const handleAdd = () => {
   showModal.value = true
+  editType.value = 'add';
 }
 
+// 关闭modal
+const cancelCallback = () => {
+  // message.success("Cancel");
+  showModal.value = false;
+}
+
+// 提交表单
+const submitCallback = async (e: MouseEvent) => {
+  e.preventDefault()
+  if (editType.value === 'add') {
+    await saveAddress({...modal.value, regionId: regionId.value});
+  } else {
+    await updateAddress({...modal.value, regionId: regionId.value})
+  }
+  showModal.value = false;
+  getAddList()
+}
+
+
 // 设为默认地址
-const handleSetDefault = (item: any) => {
-  console.log(item.id);
-  
+const handleSetDefault = async (item: any) => {
   userAddressList.value.map(n => {
     n.isDefault = 0;
     if(n.id === item.id) {
       n.isDefault = 1;
     }
-  }) 
+  })
 }
 
+// 获取地址列表
 const getAddList = async () => {
   const res = await findUserAddressList()
-  console.log(res);
+  userAddressList.value = res;
 }
 
-const getReginList = async () => {
+// 获取区域列表
+const getRegionList = async () => {
   const res = await findBaseRegion()
+  regionOptions.value = res.map((item: CascaderOption) => {
+    return {
+      label: item.regionName,
+      value: item.id,
+      depth: 1,
+      isLeaf: false
+    }
+  });
+}
+
+// 修改级联表单
+const handleLoad = (option: CascaderOption) => {
+  regionId.value = option.value as number;
+  return new Promise<void>((resolve) => {
+    window.setTimeout(async () => {
+      const res = await findBaseProvinceByRegionId(option.value as number)
+      const list:CascaderOption[]  = [];
+      for(let i = 0; i < res.length; i ++) {
+        list.push({
+          label: res[i].name,
+          value: res[i].id,
+          depth: 2,
+          isLeaf: true
+        })
+      }
+      option.children = list;
+      resolve()
+    }, 1000)
+  })
 }
 
 onMounted(() => {
   getAddList()
-  getReginList()
+  getRegionList()
 })
 </script>
 
