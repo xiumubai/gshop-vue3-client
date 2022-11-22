@@ -141,9 +141,17 @@ const handleDeleteAdd = async (item: any) => {
 const handleUpdateAdd = (item: any) => {
   showModal.value = true;
   editType.value = 'update';
+
+  regionOptions.value.map(async (n: CascaderOption) => {
+    if (n?.value === item.regionId) {
+      n.children = await getProvinceList(item.regionId)
+    }
+  })
+
   modal.value = {
     ...item
   }
+
 }
 
 // 添加收货地址
@@ -154,7 +162,6 @@ const handleAdd = () => {
 
 // 关闭modal
 const cancelCallback = () => {
-  // message.success("Cancel");
   showModal.value = false;
 }
 
@@ -200,22 +207,28 @@ const getRegionList = async () => {
   });
 }
 
+// 获取省份列表
+const getProvinceList = async (id: number) => {
+  const res = await findBaseProvinceByRegionId(id as number)
+  const list:CascaderOption[]  = [];
+  for(let i = 0; i < res.length; i ++) {
+    list.push({
+      label: res[i].name,
+      value: res[i].id,
+      depth: 2,
+      isLeaf: true
+    })
+  }
+
+  return list;
+}
+
 // 修改级联表单
 const handleLoad = (option: CascaderOption) => {
   regionId.value = option.value as number;
   return new Promise<void>((resolve) => {
     window.setTimeout(async () => {
-      const res = await findBaseProvinceByRegionId(option.value as number)
-      const list:CascaderOption[]  = [];
-      for(let i = 0; i < res.length; i ++) {
-        list.push({
-          label: res[i].name,
-          value: res[i].id,
-          depth: 2,
-          isLeaf: true
-        })
-      }
-      option.children = list;
+      option.children = await getProvinceList(option.value as number);
       resolve()
     }, 1000)
   })
