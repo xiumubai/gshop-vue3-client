@@ -113,6 +113,7 @@ const userAddressList = ref<IAddItem[]>([])
 const regionOptions = ref([])
 const showModal = ref(false)
 
+// 重置表单数据
 const modal = ref({
   consignee: null,
   phoneNum: null,
@@ -158,6 +159,14 @@ const handleUpdateAdd = (item: any) => {
 const handleAdd = () => {
   showModal.value = true
   editType.value = 'add';
+
+
+  modal.value = {
+    consignee: null,
+    phoneNum: null,
+    userAddress: null,
+    provinceId: null
+  }
 }
 
 // 关闭modal
