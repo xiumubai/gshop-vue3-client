@@ -133,8 +133,9 @@
 					<!-- 商品列表 -->
 					<div class="goods-list">
 						<ul class="yui3-g">
-							<li v-for="goods in goodsList" :key="goods.id" class="yui3-u-1-5">
-								<div class="list-wrap">
+							<template v-for="goods in goodsList">
+							<li  :key="goods.id" v-if="goods.title.length > 10" class="yui3-u-1-5">
+								<div class="list-wrap" >
 									<div class="p-img">
 										<router-link
 											:to="{
@@ -165,6 +166,7 @@
 									</div>
 								</div>
 							</li>
+						</template>
 						</ul>
 					</div>
 					<!-- 分页器 -->
@@ -241,7 +243,7 @@ const searchOption = reactive<searchGoodsListParams>({
 	// 当前页码
 	pageNo: 1,
 	// 每页条数
-	pageSize: 5,
+	pageSize: 20,
 });
 
 /*
@@ -271,7 +273,7 @@ const searchGoodsList = debounce(async () => {
 	const data = await reqSearchGoodList(option);
 	trademarkList.value = data.trademarkList;
 	attrsList.value = data.attrsList;
-	goodsList.value = data.goodsList;
+	goodsList.value = data.goodsList.filter((item: { title: string|any[]; }) => item.title.length > 10);
 	total.value = data.total;
 }, 200);
 
