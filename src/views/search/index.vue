@@ -274,7 +274,7 @@ const searchGoodsList = debounce(async () => {
 	trademarkList.value = data.trademarkList;
 	attrsList.value = data.attrsList;
 	goodsList.value = data.goodsList.filter((item: { title: string|any[]; }) => item.title.length > 10);
-	total.value = data.total;
+	total.value = data.total - 9;
 }, 200);
 
 // 监视route，当route发生变化，说明query或params发生了变化
