@@ -170,13 +170,13 @@ const router = useRouter();
 // 提交订单
 const submitOrder = async () => {
 	const { tradeNo, detailArrayList, totalAmount } = tradeInfo.value;
-	const { consignee, consigneeTel, deliveryAddress } = selectedUser.value;
+	const { consignee, phoneNum, fullAddress } = selectedUser.value;
 
 	const orderId = await reqSubmitOrder({
 		tradeNo,
 		consignee,
-		consigneeTel,
-		deliveryAddress,
+		phoneNum,
+		fullAddress,
 		paymentWay: "ONLINE", // 支付方式
 		orderComment: orderComment.value, // 订单备注
 		orderDetailList: detailArrayList, // 商品列表
