@@ -155,7 +155,7 @@
 										</strong>
 									</div>
 									<div class="attr">
-										<a>{{ goods.title }}</a>
+										<a v-html="goods.title"></a>
 									</div>
 									<div class="commit">
 										<i class="command">已有<span>2000</span>人评价</i>
