@@ -292,6 +292,7 @@ const submitOrder = async () => {
 				line-height: 1.8;
 				outline: none;
 				resize: none;
+				padding: 8px;
 			}
 		}
 
