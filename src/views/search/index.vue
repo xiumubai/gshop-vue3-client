@@ -133,8 +133,8 @@
 					<!-- 商品列表 -->
 					<div class="goods-list">
 						<ul class="yui3-g">
-							<template v-for="goods in goodsList">
-							<li  :key="goods.id" v-if="goods.title.length > 10" class="yui3-u-1-5">
+							<template v-for="goods in goodsList" :key="goods.id">
+							<li  class="yui3-u-1-5">
 								<div class="list-wrap" >
 									<div class="p-img">
 										<router-link
@@ -243,7 +243,7 @@ const searchOption = reactive<searchGoodsListParams>({
 	// 当前页码
 	pageNo: 1,
 	// 每页条数
-	pageSize: 20,
+	pageSize: 5,
 });
 
 /*
@@ -273,8 +273,8 @@ const searchGoodsList = debounce(async () => {
 	const data = await reqSearchGoodList(option);
 	trademarkList.value = data.trademarkList;
 	attrsList.value = data.attrsList;
-	goodsList.value = data.goodsList.filter((item: { title: string|any[]; }) => item.title.length > 10);
-	total.value = data.total - 9;
+	goodsList.value = data.goodsList;
+	total.value = data.total;
 }, 200);
 
 // 监视route，当route发生变化，说明query或params发生了变化
