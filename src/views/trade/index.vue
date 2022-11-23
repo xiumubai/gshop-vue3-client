@@ -2,7 +2,7 @@
 	<div class="trade-container">
 		<h3 class="title">填写并核对订单信息</h3>
 		<div class="content">
-			<Address />	
+			<Address @change-address="changeAddress"/>	
 			<div class="line"></div>
 			<Pay />
 			<div class="line"></div>
@@ -81,9 +81,9 @@
 			</div>
 			<div class="receiveInfo">
 				寄送至:
-				<span>{{ selectedUser.deliveryAddress }}</span>
+				<span>{{ selectedUser.fullAddress }}</span>
 				收货人：<span>{{ selectedUser.consignee }}</span>
-				<span>{{ selectedUser.consigneeTel }}</span>
+				<span>{{ selectedUser.phoneNum }}</span>
 			</div>
 		</div>
 		<div class="sub clearFix">
@@ -124,8 +124,17 @@ const tradeInfo = ref<TradeInfo>({
 	tradeNo: "", // 订单号
 });
 
+const selectedUser = ref({
+	phoneNum: null,
+	fullAddress: null,
+	consignee: null	
+}); 
 const orderComment = ref("");
-
+const changeAddress = (item: any) => {
+	selectedUser.value = {
+		...item
+	}	
+}
 onMounted(async () => {
 	const data = await reqGetTrade();
 	tradeInfo.value = {
@@ -154,19 +163,6 @@ onMounted(async () => {
 			},
 		],
 	};
-});
-
-// Pick<UserAddressItem, "consignee" | "consigneeTel" | "deliveryAddress">
-const selectedUser = computed(() => {
-	// 一开始是空数组，找不到内容，返回值是undefined。undefined读取属性就会报错
-	// 解决：
-	return (
-		tradeInfo.value.userAddressList.find((user) => user.isDefault) || {
-			consignee: "",
-			consigneeTel: "",
-			deliveryAddress: "",
-		}
-	);
 });
 
 const router = useRouter();

@@ -9,7 +9,7 @@
       :key="item.id"
       class="address clearFix"
     >
-      <span @click="handleChangeAdd(item.id)" :class="{ username: true, selected: item.selected }">
+      <span @click="handleChangeAdd(item)" :class="{ username: true, selected: item.selected }">
         {{ item.consignee }}
       </span>
       <div class="add-item">
@@ -101,6 +101,8 @@ import {
 } from 'naive-ui'
 import { time } from 'console';
 
+const emit = defineEmits(['change-address'])
+
 type IAddItem = {
   id: number;
   consignee: string;
@@ -123,10 +125,11 @@ const modal = ref({
 const regionId = ref<number | null>(null)
 const editType = ref('add')
 // 切换收货地址
-const handleChangeAdd = (id: number) => {
+const handleChangeAdd = (item: any) => {
+  emit('change-address', item)
   userAddressList.value.map(n => {
     n.selected = false
-    if (n.id === id) {
+    if (n.id === item.id) {
       n.selected = true
     }
   })
@@ -235,11 +238,16 @@ const getProvinceList = async (id: number) => {
 // 修改级联表单
 const handleLoad = (option: CascaderOption) => {
   regionId.value = option.value as number;
-  return new Promise<void>((resolve) => {
-    window.setTimeout(async () => {
-      option.children = await getProvinceList(option.value as number);
+  return new Promise<void>(async (resolve, reject) => {
+    const list = await getProvinceList(option.value as number);
+    console.log(list);
+    
+    if (list.length > 0) {
+      option.children = list;
       resolve()
-    }, 1000)
+    } else {
+      reject()
+    }
   })
 }
 
