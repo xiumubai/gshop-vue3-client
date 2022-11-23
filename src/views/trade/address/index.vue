@@ -16,11 +16,11 @@
         <div>
           <span class="s1">{{ item.fullAddress }}</span>
           <span class="s2">{{ item.phoneNum }}</span>
-          <span v-if="item.isDefault" class="s3">默认地址</span>
+          <span v-if="item.isDefault == '1'" class="s3">默认地址</span>
         </div>
 
         <div class="options">
-          <span @click="handleSetDefault(item)" v-if="!item.isDefault">设为默认地址</span>
+          <span @click="handleSetDefault(item)" v-if="item.isDefault == '0'">设为默认地址</span>
           <span @click="handleUpdateAdd(item)">编辑</span>
           <span @click="handleDeleteAdd(item)">删除</span>
         </div>
@@ -106,7 +106,7 @@ type IAddItem = {
   consignee: string;
   fullAddress: string;
   phoneNum: number;
-  isDefault: number;
+  isDefault: string;
   selected?: boolean;
 }
 const userAddressList = ref<IAddItem[]>([])
@@ -190,9 +190,9 @@ const submitCallback = async (e: MouseEvent) => {
 // 设为默认地址
 const handleSetDefault = async (item: any) => {
   userAddressList.value.map(n => {
-    n.isDefault = 0;
+    n.isDefault = '0';
     if(n.id === item.id) {
-      n.isDefault = 1;
+      n.isDefault = '1';
     }
   })
 }
