@@ -28,7 +28,7 @@
     </div>
     <n-modal
       v-model:show="showModal"
-      style="width: 700px"
+      style="width: 600px"
       preset="card"
       title="收货地址"
       positive-text="确认"
@@ -45,16 +45,17 @@
         <n-form-item label="联系电话" path="phoneNum">
           <n-input placeholder="请输入联系电话" v-model:value="modal.phoneNum"></n-input>
         </n-form-item>
-        <n-form-item label="所在地区" path="provinceId">
+        <n-form-item label="所在地区">
           <n-cascader
-            v-model:value="modal.provinceId"
+            :value="modal.provinceId"
             :options="regionOptions"
             :multiple="false"
             placeholder="所在地区"
             remote
             clearable
             check-strategy="child"
-            :on-load="handleLoad"
+            @load="handleLoad"
+            @update:value="handleUpdateValue"
           />
         </n-form-item>
         <n-form-item label="详细地址" path="userAddress">
@@ -99,7 +100,6 @@ import {
   CascaderOption, 
   NButton,
 } from 'naive-ui'
-import { time } from 'console';
 
 const emit = defineEmits(['change-address'])
 
@@ -115,15 +115,23 @@ const userAddressList = ref<IAddItem[]>([])
 const regionOptions = ref([])
 const showModal = ref(false)
 
-// 重置表单数据
+// 表单数据
 const modal = ref({
   consignee: null,
   phoneNum: null,
   userAddress: null,
   provinceId: null
 })
+
+const provinceId = ref(null)
+
 const regionId = ref<number | null>(null)
 const editType = ref('add')
+
+const handleUpdateValue = (value: any, option: CascaderOption) => {
+  console.log(value, option);
+  modal.value.provinceId = value;
+}
 // 切换收货地址
 const handleChangeAdd = (item: any) => {
   emit('change-address', item)
@@ -162,7 +170,6 @@ const handleUpdateAdd = (item: any) => {
 const handleAdd = () => {
   showModal.value = true
   editType.value = 'add';
-
 
   modal.value = {
     consignee: null,
@@ -231,17 +238,16 @@ const getProvinceList = async (id: number) => {
       isLeaf: true
     })
   }
-
   return list;
 }
 
 // 修改级联表单
 const handleLoad = (option: CascaderOption) => {
+  console.log(option);
+  
   regionId.value = option.value as number;
   return new Promise<void>(async (resolve, reject) => {
-    const list = await getProvinceList(option.value as number);
-    console.log(list);
-    
+    const list = await getProvinceList(option.value as number); 
     if (list.length > 0) {
       option.children = list;
       resolve()
