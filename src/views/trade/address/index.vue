@@ -47,7 +47,7 @@
         </n-form-item>
         <n-form-item label="所在地区">
           <n-cascader
-            :value="modal.provinceId"
+            :value="regionValue"
             :options="regionOptions"
             :multiple="false"
             placeholder="所在地区"
@@ -120,17 +120,17 @@ const modal = ref({
   consignee: null,
   phoneNum: null,
   userAddress: null,
-  provinceId: null
+  provinceId: null,
+  regionId: null,
+  isDefault: '0'
 })
 
-const provinceId = ref(null)
+const regionValue = ref()
 
-const regionId = ref<number | null>(null)
 const editType = ref('add')
 
 const handleUpdateValue = (value: any, option: CascaderOption) => {
-  console.log(value, option);
-  modal.value.provinceId = value;
+  regionValue.value = value;
 }
 // 切换收货地址
 const handleChangeAdd = (item: any) => {
@@ -157,6 +157,7 @@ const handleUpdateAdd = (item: any) => {
   regionOptions.value.map(async (n: CascaderOption) => {
     if (n?.value === item.regionId) {
       n.children = await getProvinceList(item.regionId)
+      regionValue.value = `${item.regionId}-${item.provinceId}` as any
     }
   })
 
@@ -175,8 +176,12 @@ const handleAdd = () => {
     consignee: null,
     phoneNum: null,
     userAddress: null,
-    provinceId: null
+    provinceId: null,
+    regionId: null,
+    isDefault: '0'
   }
+
+  regionValue.value = null;
 }
 
 // 关闭modal
@@ -187,10 +192,14 @@ const cancelCallback = () => {
 // 提交表单
 const submitCallback = async (e: MouseEvent) => {
   e.preventDefault()
+  const addstr = regionValue.value.split('-');
+  modal.value.regionId = addstr[0];
+  modal.value.provinceId = addstr[1];
+
   if (editType.value === 'add') {
-    await saveAddress({...modal.value, regionId: regionId.value});
+    await saveAddress({...modal.value});
   } else {
-    await updateAddress({...modal.value, regionId: regionId.value})
+    await updateAddress({...modal.value})
   }
   showModal.value = false;
   getAddList()
@@ -233,7 +242,7 @@ const getProvinceList = async (id: number) => {
   for(let i = 0; i < res.length; i ++) {
     list.push({
       label: res[i].name,
-      value: res[i].id,
+      value: `${id}-${res[i].id}`,
       depth: 2,
       isLeaf: true
     })
@@ -243,9 +252,7 @@ const getProvinceList = async (id: number) => {
 
 // 修改级联表单
 const handleLoad = (option: CascaderOption) => {
-  console.log(option);
-  
-  regionId.value = option.value as number;
+
   return new Promise<void>(async (resolve, reject) => {
     const list = await getProvinceList(option.value as number); 
     if (list.length > 0) {
