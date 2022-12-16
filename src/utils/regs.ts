@@ -1,6 +1,6 @@
 export const phoneReg = /^1[3-9][0-9]{9}$/;
 // 定义表单校验规则
-export const validatePhone = (value: string) => {
+export const validatePhone: any = (value: string) => {
 	if (!value) {
 		return "请输入手机号";
 	}
@@ -14,7 +14,7 @@ export const validatePhone = (value: string) => {
 };
 
 export const passwordReg = /^[a-zA-Z0-9_]{6,18}$/;
-export const validatePassword = (value: string) => {
+export const validatePassword: any = (value: string) => {
 	if (!value) {
 		return "请输入密码";
 	}

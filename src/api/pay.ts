@@ -23,7 +23,7 @@ interface reqSubmitOrderParams {
 export const reqSubmitOrder = ({
 	tradeNo,
 	...data
-}: reqSubmitOrderParams): any => {
+}: any): any => {
 	return request({
 		method: "POST",
 		url: `/order/auth/submitOrder`,

@@ -102,6 +102,7 @@ export default {
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { reqGetTrade, reqSubmitOrder } from "@/api/pay";
+
 import type { TradeInfo, UserAddressItem } from "./types";
 import Address from './address/index.vue'
 import Pay from './pay/index.vue'
@@ -123,11 +124,16 @@ const tradeInfo = ref<TradeInfo>({
 	totalNum: 0, // 数量
 	tradeNo: "", // 订单号
 });
+interface IUserSelect {
+	phoneNum: number;
+	consignee: string;
+	fullAddress: string;	
+}
 
-const selectedUser = ref({
-	phoneNum: null,
-	fullAddress: null,
-	consignee: null	
+const selectedUser = ref<IUserSelect>({
+	phoneNum: 0,
+	fullAddress: "",
+	consignee: ""
 }); 
 const orderComment = ref("");
 const changeAddress = (item: any) => {

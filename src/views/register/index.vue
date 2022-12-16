@@ -170,7 +170,7 @@ const register = async (values: any) => {
 };
 
 const codeReg = /^[0-9]{6}$/;
-const validateCode = (value: string) => {
+const validateCode: any = (value: string) => {
 	if (!value) {
 		return "请输入验证码";
 	}
@@ -182,7 +182,7 @@ const validateCode = (value: string) => {
 	return true;
 };
 
-const validateRePassword = (value: string, { form }: UserForm) => {
+const validateRePassword: any = (value: string, { form }: UserForm) => {
 	if (!value) {
 		return "请输入确认密码";
 	}
@@ -194,7 +194,7 @@ const validateRePassword = (value: string, { form }: UserForm) => {
 	return true;
 };
 
-const validateIsAgree = (value: boolean) => {
+const validateIsAgree:any  = (value: boolean) => {
 	if (!value) {
 		return "请同意用户协议";
 	}
