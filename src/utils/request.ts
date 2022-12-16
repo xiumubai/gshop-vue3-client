@@ -27,6 +27,16 @@ import store from "@/store";
 import "nprogress/nprogress.css";
 import getUserTempId from "./getUserTempId";
 
+console.log('NODE_ENV', process.env.NODE_ENV);
+
+const env = process.env.NODE_ENV || 'dev';
+const urlEnv: any = {
+  prod: 'http://sph-h5-api.atguigu.cn/api',
+  test: 'http://gmall-h5-api.atguigu.cn/api',
+  dev: '/api'
+};
+const BASE_URL = urlEnv[env] || "/api";
+
 // https://www.npmjs.com/package/nprogress
 NProgress.configure({ showSpinner: false });
 
@@ -35,7 +45,7 @@ NProgress.configure({ showSpinner: false });
 const request = axios.create({
 	// 基础路径：所有通过request发送请求的接口的请求地址，都会自动在前面加上baseURL
 	// 公共的请求地址前缀
-	baseURL: "/api", // 所以：所有请求地址会自动在前面加上/api
+	baseURL: BASE_URL, // 所以：所有请求地址会自动在前面加上/api
 	// 请求超时时间：超过10s请求会中断，就会失败
 	timeout: 10000,
 	// 公共请求头参数: 静态的，写死的
