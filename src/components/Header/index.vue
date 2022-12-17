@@ -2,7 +2,7 @@
 	<header class="header">
 		<div class="header-top">
 			<span>
-				尚品汇欢迎您 朽木白！
+				尚品汇欢迎您！
 				<span v-if="store.state.user.nickName">
 					{{ store.state.user.nickName }}
 					<button @click="store.dispatch('user/logout')">退出登录</button>
