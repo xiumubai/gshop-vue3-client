@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "vite --mode dev",
     "build": "vite build --mode prod",
-    "build:test": "vite build --mode test",
-    "preview": "vite preview"
+    "build:test": "vite build --mode test"
   },
   "dependencies": {
     "axios": "^0.26.1",
