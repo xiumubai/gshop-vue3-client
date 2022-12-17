@@ -6,7 +6,7 @@
 				<div class="order-left">
 					<dl>
 						<dt><i>·</i> 订单中心</dt>
-						<dd>我的订单1</dd>
+						<dd>我的订单</dd>
 						<dd>团购订单</dd>
 						<dd>本地生活订单</dd>
 						<dd>我的预售</dd>
